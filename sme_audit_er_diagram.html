@@ -1,0 +1,228 @@
+<style>
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: #ffffff;
+    color: #1f2937;
+  }
+
+  #erd {
+    padding: 24px;
+    overflow: auto;
+  }
+
+  #relationship-legend {
+    max-width: 900px;
+    margin: 0 24px 24px;
+    padding: 16px 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #111827;
+    font: 13px/1.5 sans-serif;
+  }
+
+  #relationship-legend h2 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+
+  #relationship-legend ul {
+    columns: 2;
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  #relationship-legend li {
+    margin: 3px 0;
+  }
+
+  #erd svg.erDiagram .node rect,
+  #erd svg.erDiagram .node path {
+    fill: #f8fafc !important;
+    stroke: #334155 !important;
+  }
+
+  #erd svg.erDiagram text,
+  #erd svg.erDiagram .nodeLabel,
+  #erd svg.erDiagram .edgeLabel {
+    fill: #111827 !important;
+    color: #111827 !important;
+  }
+
+  #erd svg.erDiagram .edgePath path,
+  #erd svg.erDiagram .relationshipLine {
+    stroke: #475569 !important;
+    fill: none !important;
+  }
+
+  #erd svg.erDiagram .marker {
+    stroke: #475569 !important;
+    fill: #475569 !important;
+  }
+
+  #erd svg.erDiagram .divider path {
+    stroke-opacity: 0.5;
+  }
+  #erd svg.erDiagram .row-rect-odd path,
+  #erd svg.erDiagram .row-rect-odd rect,
+  #erd svg.erDiagram .row-rect-even path,
+  #erd svg.erDiagram .row-rect-even rect {
+    stroke: none !important;
+  }
+</style>
+<div id="erd"></div>
+<section id="relationship-legend" aria-label="Relationship types">
+  <h2>Relationship types</h2>
+  <ul>
+    <li>BUSINESS to USER: 1:N (one business has zero or many users)</li>
+    <li>
+      BUSINESS to DOCUMENT_UPLOAD: 1:N (one business has zero or many uploads)
+    </li>
+    <li>BUSINESS to FINDING: 1:N (one business has zero or many findings)</li>
+    <li>
+      BUSINESS to QUERY_SESSION: 1:N (one business has zero or many sessions)
+    </li>
+    <li>
+      COMPLIANCE_REQUIREMENT to FINDING: 1:N (one requirement has zero or many
+      findings)
+    </li>
+    <li>
+      REGULATORY_DOCUMENT to COMPLIANCE_REQUIREMENT: 1:N (one document defines
+      zero or many requirements)
+    </li>
+    <li>
+      REGULATORY_DOCUMENT to FINDING: 1:N (one document is cited by zero or many
+      findings)
+    </li>
+    <li>
+      QUERY_SESSION to TOOL_CALL_LOG: 1:N (one session has zero or many tool
+      calls)
+    </li>
+  </ul>
+</section>
+<script type="module">
+  import mermaid from "https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs";
+  const themeMode = document.documentElement.dataset.mode;
+  const dark = themeMode
+    ? themeMode === "dark"
+    : matchMedia("(prefers-color-scheme: dark)").matches;
+  await document.fonts.ready;
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "base",
+    fontFamily: '"anthropic-sans", sans-serif',
+    themeVariables: {
+      darkMode: false,
+      fontSize: "13px",
+      fontFamily: '"anthropic-sans", sans-serif',
+      background: "#ffffff",
+      primaryColor: "#f8fafc",
+      primaryBorderColor: "#334155",
+      lineColor: "#475569",
+      textColor: "#111827",
+    },
+  });
+  const { svg } = await mermaid.render(
+    "erd-svg",
+    `erDiagram
+  BUSINESS ||--o{ USER : "has (1:N)"
+  BUSINESS ||--o{ DOCUMENT_UPLOAD : "uploads (1:N)"
+  BUSINESS ||--o{ FINDING : "receives (1:N)"
+  BUSINESS ||--o{ QUERY_SESSION : "asks (1:N)"
+  COMPLIANCE_REQUIREMENT ||--o{ FINDING : "evaluated_as (1:N)"
+  REGULATORY_DOCUMENT ||--o{ COMPLIANCE_REQUIREMENT : "defines (1:N)"
+  REGULATORY_DOCUMENT ||--o{ FINDING : "cites (1:N)"
+  QUERY_SESSION ||--o{ TOOL_CALL_LOG : "triggers (1:N)"
+  BUSINESS {
+    int business_id PK
+    string name
+    string type
+    float turnover
+    int employee_count
+    string state
+    string registration_status
+  }
+  USER {
+    int user_id PK
+    string name
+    string phone
+    string role
+    int business_id FK
+  }
+  REGULATORY_DOCUMENT {
+    int doc_id PK
+    string title
+    string source
+    string category
+    string section
+  }
+  COMPLIANCE_REQUIREMENT {
+    int requirement_id PK
+    string name
+    string threshold_condition
+    int doc_id FK
+  }
+  DOCUMENT_UPLOAD {
+    int upload_id PK
+    int business_id FK
+    string file_type
+    string extracted_data
+  }
+  FINDING {
+    int finding_id PK
+    int business_id FK
+    int requirement_id FK
+    int evidence_doc_id FK
+    string status
+    string reasoning
+  }
+  QUERY_SESSION {
+    int query_id PK
+    int business_id FK
+    int user_id FK
+    string question_text
+  }
+  TOOL_CALL_LOG {
+    int log_id PK
+    int query_id FK
+    string tool_name
+    string output_result
+  }`,
+  );
+  document.getElementById("erd").innerHTML = svg;
+
+  document.querySelectorAll("#erd svg.erDiagram .node").forEach((node) => {
+    const firstPath = node.querySelector("path[d]");
+    if (!firstPath) return;
+    const d = firstPath.getAttribute("d");
+    const nums = d.match(/-?[\d.]+/g)?.map(Number);
+    if (!nums || nums.length < 8) return;
+    const xs = [nums[0], nums[2], nums[4], nums[6]];
+    const ys = [nums[1], nums[3], nums[5], nums[7]];
+    const x = Math.min(...xs),
+      y = Math.min(...ys);
+    const w = Math.max(...xs) - x,
+      h = Math.max(...ys) - y;
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", x);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", w);
+    rect.setAttribute("height", h);
+    rect.setAttribute("rx", "8");
+    for (const a of ["fill", "stroke", "stroke-width", "class", "style"]) {
+      if (firstPath.hasAttribute(a))
+        rect.setAttribute(a, firstPath.getAttribute(a));
+    }
+    firstPath.replaceWith(rect);
+  });
+
+  document
+    .querySelectorAll(
+      "#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path",
+    )
+    .forEach((p) => {
+      p.setAttribute("stroke", "none");
+    });
+</script>
