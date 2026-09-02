@@ -1,7 +1,5 @@
 # SME Compliance Assistant — Progress Milestone Prototypes
 
-Two runnable mini-demos proving the core pipeline works, built for today's milestone.
-
 ## Setup (on your own machine)
 
 ```bash
