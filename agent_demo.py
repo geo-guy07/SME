@@ -1,6 +1,10 @@
 """
-Agent Mini-Demo — SME Compliance Assistant
+Agent Mini-Demo — SME Compliance Assistant (Milestone 3)
 Pipeline: Question -> LLM decides tool -> Tool executes -> LLM uses result -> final answer
+
+Milestone 3 change: query_business_data() and check_requirement() are now
+backed by the real business_profile.py and rules_engine.py modules instead
+of a hardcoded dict and inline if/else (as they were in Milestone 1/2).
 
 Setup:
     pip install google-generativeai
@@ -11,20 +15,14 @@ Run:
 """
 
 import os
-import json
 from regulations import REGULATIONS
+from business_profile import get_business, SAMPLE_BUSINESSES
+from rules_engine import evaluate_business, ALL_RULES
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-# ---- Mock business data (stands in for a real business-profile DB lookup) ----
-BUSINESS_PROFILE = {
-    "business_id": "B001",
-    "name": "Sharma Textiles",
-    "turnover_lakh": 50,
-    "employee_count": 8,
-    "state": "Madhya Pradesh",
-    "registration_status": "unregistered",
-}
+# Business the demo runs against (swap business_id to try others in SAMPLE_BUSINESSES)
+ACTIVE_BUSINESS_ID = "B001"
 
 
 # ---- Tools the agent can call ----
@@ -40,29 +38,29 @@ def search_regulations(keyword: str):
     return [r for r in scored if score(r) > 0][:3] or REGULATIONS[:1]
 
 
-def query_business_data(field: str = None):
-    """Return the current business profile (or a single field)."""
-    if field and field in BUSINESS_PROFILE:
-        return {field: BUSINESS_PROFILE[field]}
-    return BUSINESS_PROFILE
+def query_business_data(business_id: str = ACTIVE_BUSINESS_ID):
+    """Look up a business profile by ID (real lookup, no longer a hardcoded dict)."""
+    biz = get_business(business_id)
+    return biz.as_dict() if biz else {"error": f"No business found for id {business_id}"}
 
 
-def check_requirement(requirement_name: str, turnover_lakh: float, employee_count: int):
-    """Apply a simple threshold rule to decide if a requirement applies."""
+def check_requirement(requirement_name: str, business_id: str = ACTIVE_BUSINESS_ID):
+    """
+    Apply the rules engine to a business and return the finding matching
+    requirement_name. Replaces the old inline threshold logic — this now
+    calls the same rules_engine.py used standalone in rules_engine.py.
+    """
+    biz = get_business(business_id)
+    if not biz:
+        return {"error": f"No business found for id {business_id}"}
+
     requirement_name = requirement_name.lower()
-    if "gst" in requirement_name:
-        applies = turnover_lakh >= 40
-        return {"requirement": "GST Registration", "applies": applies,
-                "reason": f"Turnover Rs.{turnover_lakh}L vs Rs.40L threshold for goods"}
-    if "shops" in requirement_name or "establishment" in requirement_name:
-        applies = employee_count >= 1
-        return {"requirement": "Shops & Establishments Registration", "applies": applies,
-                "reason": f"Employs {employee_count} person(s); registration required once >=1"}
-    if "pf" in requirement_name or "provident" in requirement_name:
-        applies = employee_count >= 20
-        return {"requirement": "PF Registration", "applies": applies,
-                "reason": f"Employs {employee_count}; PF required only at >=20 employees"}
-    return {"requirement": requirement_name, "applies": None, "reason": "No rule defined yet"}
+    findings = evaluate_business(biz)
+    for f in findings:
+        if requirement_name in f.requirement.lower():
+            return {"requirement": f.requirement, "applies": f.applies,
+                     "reason": f.reason, "evidence_id": f.evidence_id}
+    return {"requirement": requirement_name, "applies": None, "reason": "No matching rule found"}
 
 
 TOOLS = {
@@ -90,45 +88,49 @@ def run_agent_mock(question):
     """
     Deterministic mock of the agent loop for environments without an API key —
     shows the SAME decide -> call -> use-result -> answer pattern the real
-    Gemini function-calling loop follows.
+    Gemini function-calling loop follows. Now driven by the real rules engine
+    instead of hardcoded threshold checks.
     """
-    print("    Agent reasoning: question mentions turnover + employees -> check business data first.")
-    biz = TOOLS["query_business_data"]()
+    print("    Agent reasoning: question asks about registrations -> look up business profile first.")
+    biz = query_business_data()
     print(f"    [tool_call] query_business_data() -> {biz}")
 
-    print("    Agent reasoning: now check GST applicability using that data.")
-    gst_result = TOOLS["check_requirement"]("gst", biz["turnover_lakh"], biz["employee_count"])
-    print(f"    [tool_call] check_requirement('gst', {biz['turnover_lakh']}, {biz['employee_count']}) -> {gst_result}")
+    print("    Agent reasoning: run the rules engine against every requirement it knows about.")
+    biz_obj = get_business(ACTIVE_BUSINESS_ID)
+    findings = evaluate_business(biz_obj)
+    applicable = [f for f in findings if f.applies]
+    for f in findings:
+        print(f"    [tool_call] check_requirement('{f.requirement}') -> "
+              f"applies={f.applies}, reason='{f.reason}'")
 
-    print("    Agent reasoning: also check Shops & Establishments since employees >= 1.")
-    se_result = TOOLS["check_requirement"]("shops", biz["turnover_lakh"], biz["employee_count"])
-    print(f"    [tool_call] check_requirement('shops', ...) -> {se_result}")
+    print("    Agent reasoning: pull supporting regulatory evidence for each applicable finding.")
+    lines = []
+    for f in applicable:
+        evidence = next((r for r in REGULATIONS if r["id"] == f.evidence_id), None)
+        print(f"    [tool_call] search_regulations() -> matched evidence [{f.evidence_id}]")
+        if evidence:
+            lines.append(
+                f"Finding: {f.requirement} applies.\n"
+                f"  Reason: {f.reason}\n"
+                f"  Evidence: [{evidence['id']}] {evidence['title']} ({evidence['source']})"
+            )
 
-    print("    Agent reasoning: pull supporting regulatory evidence for the applicable findings.")
-    gst_evidence = TOOLS["search_regulations"]("gst registration")
-    se_evidence = TOOLS["search_regulations"]("shops establishment")
-    print(f"    [tool_call] search_regulations('gst registration') -> {[r['id'] for r in gst_evidence]}")
-    print(f"    [tool_call] search_regulations('shops establishment') -> {[r['id'] for r in se_evidence]}")
-
-    answer = (
-        f"Finding 1: GST Registration applies.\n"
-        f"  Reason: {gst_result['reason']}\n"
-        f"  Evidence: [{gst_evidence[0]['id']}] {gst_evidence[0]['title']} ({gst_evidence[0]['source']})\n\n"
-        f"Finding 2: Shops & Establishments Registration applies.\n"
-        f"  Reason: {se_result['reason']}\n"
-        f"  Evidence: [{se_evidence[0]['id']}] {se_evidence[0]['title']} ({se_evidence[0]['source']})\n\n"
-        f"Business data used: turnover=Rs.{biz['turnover_lakh']}L, employees={biz['employee_count']}, "
-        f"state={biz['state']}"
+    answer = "\n\n".join(lines)
+    answer += (
+        f"\n\nBusiness data used: turnover=Rs.{biz['turnover_lakh']}L, "
+        f"employees={biz['employee_count']}, state={biz['state']}, "
+        f"type={biz['business_type']}"
     )
     return answer
 
 
 def main():
     print("=" * 70)
-    print("SME COMPLIANCE ASSISTANT — AGENT (TOOL-CALLING) MINI-DEMO")
+    print("SME COMPLIANCE ASSISTANT — AGENT (TOOL-CALLING) MINI-DEMO — Milestone 3")
     print("=" * 70)
 
-    question = "What registrations does my business need? Check my profile and tell me."
+    biz = get_business(ACTIVE_BUSINESS_ID)
+    question = f"What registrations does {biz.name} need? Check the business profile and tell me."
     print(f"\nQuestion: {question}\n")
 
     if GEMINI_API_KEY:
