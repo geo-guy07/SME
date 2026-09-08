@@ -45,11 +45,11 @@ REGULATIONS = [
         "id": "MSME-001",
         "category": "MSME",
         "title": "Udyam Registration - Micro Enterprise Classification",
-        "source": "Ministry of MSME Notification, Udyam Registration 2020",
+        "source": "Ministry of MSME Notification, revised classification effective April 2025",
         "text": (
             "An enterprise is classified as Micro if its investment in plant and machinery "
-            "or equipment does not exceed Rs. 2.5 crore and annual turnover does not exceed "
-            "Rs. 10 crore. Micro enterprises must register on the Udyam portal to access "
+            "or equipment does not exceed Rs. 1 crore and annual turnover does not exceed "
+            "Rs. 5 crore. Micro enterprises must register on the Udyam portal to access "
             "government schemes, priority lending, and delayed-payment protection."
         ),
     },
@@ -57,11 +57,11 @@ REGULATIONS = [
         "id": "MSME-002",
         "category": "MSME",
         "title": "Udyam Registration - Small Enterprise Classification",
-        "source": "Ministry of MSME Notification, Udyam Registration 2020",
+        "source": "Ministry of MSME Notification, revised classification effective April 2025",
         "text": (
             "An enterprise is classified as Small if its investment in plant and machinery "
-            "or equipment does not exceed Rs. 25 crore and annual turnover does not exceed "
-            "Rs. 100 crore. Small enterprises are eligible for Udyam registration and "
+            "or equipment does not exceed Rs. 10 crore and annual turnover does not exceed "
+            "Rs. 50 crore. Small enterprises are eligible for Udyam registration and "
             "associated MSME benefits, including collateral-free loans under CGTMSE."
         ),
     },
@@ -69,11 +69,11 @@ REGULATIONS = [
         "id": "MSME-003",
         "category": "MSME",
         "title": "Udyam Registration - Medium Enterprise Classification",
-        "source": "Ministry of MSME Notification, Udyam Registration 2020",
+        "source": "Ministry of MSME Notification, revised classification effective April 2025",
         "text": (
             "An enterprise is classified as Medium if its investment in plant and machinery "
-            "or equipment does not exceed Rs. 125 crore and annual turnover does not exceed "
-            "Rs. 500 crore. Medium enterprises remain eligible for Udyam registration but "
+            "or equipment does not exceed Rs. 50 crore and annual turnover does not exceed "
+            "Rs. 250 crore. Medium enterprises remain eligible for Udyam registration but "
             "receive fewer subsidy benefits than Micro or Small enterprises."
         ),
     },

@@ -57,12 +57,17 @@ def check_composition_scheme(business: BusinessProfile) -> Finding:
 
 
 def check_udyam_classification(business: BusinessProfile) -> Finding:
+    """
+    Classification thresholds per Ministry of MSME notification, revised
+    effective April 2025 (turnover criterion; investment criterion not
+    modeled here since BusinessProfile only tracks turnover).
+    """
     turnover_crore = business.turnover_lakh / 100
-    if turnover_crore <= 10:
+    if turnover_crore <= 5:
         category, reg_id = "Micro", "MSME-001"
-    elif turnover_crore <= 100:
+    elif turnover_crore <= 50:
         category, reg_id = "Small", "MSME-002"
-    elif turnover_crore <= 500:
+    elif turnover_crore <= 250:
         category, reg_id = "Medium", "MSME-003"
     else:
         category, reg_id = "Not MSME-eligible", "MSME-003"
