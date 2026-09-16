@@ -1,0 +1,9 @@
+invoice_number,vendor_name,msme_status,invoice_date,has_agreement,amount,payment_date
+INV-2026-001,Precision Tools & Dies,Micro,2026-01-05,yes,240000.00,
+INV-2026-002,Balaji Packaging Solutions,Small,2026-01-12,yes,185000.00,
+INV-2026-003,Tata Steel Ltd,Medium,2026-01-15,yes,950000.00,
+INV-2026-004,Shree Ram Corrugators,Micro,2026-02-10,yes,78000.00,
+INV-2026-005,National Logistics Logistics,Non-MSME,2026-01-20,yes,320000.00,
+INV-2026-006,Kisan Agro Processing,Micro,2026-01-02,no,110000.00,
+INV-2026-007,Vanguard Industrial Gases,Small,2026-01-08,yes,45000.00,2026-02-04
+INV-2026-008,Modern Electrical Fittings,Micro,2026-02-28,yes,62000.00,

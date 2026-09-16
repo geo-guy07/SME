@@ -15,7 +15,7 @@ import hashlib
 import chromadb
 from chromadb.utils import embedding_functions
 from rank_bm25 import BM25Okapi
-from regulations import REGULATIONS
+from rag.regulations import REGULATIONS
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 

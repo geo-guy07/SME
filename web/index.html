@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SME Audit AI — Statutory Compliance & Registration Assistant</title>
+  <meta name="description" content="AI-powered statutory compliance auditor, regulatory RAG assistant, and portal registration automation for Indian Small & Medium Enterprises.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="theme-dark">
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">SME AUDIT AI</span>
+          <span class="brand-badge">PROTOTYPE V2</span>
+        </div>
+      </div>
+
+      <!-- Business Profile Selector -->
+      <div class="sidebar-section business-selector-wrapper">
+        <label for="business-select" class="section-label">ACTIVE BUSINESS PROFILE</label>
+        <div class="custom-select-container">
+          <select id="business-select" class="form-select">
+            <option value="B005" selected>ABC Traders (₹45L • 4 Staff • MP)</option>
+            <option value="B001">Sharma Textiles (₹50L • 8 Staff • MP)</option>
+            <option value="B002">Patel IT Solutions (₹15L • 3 Staff • MH)</option>
+            <option value="B003">Rao Manufacturing (₹180L • 25 Staff • KA)</option>
+            <option value="B004">Thapa Handicrafts (₹12L • 2 Staff • HP)</option>
+          </select>
+        </div>
+        <button id="btn-custom-business-modal" class="btn-sm btn-ghost">+ Custom Profile</button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="tab-dashboard" id="nav-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Audit Dashboard</span>
+        </button>
+        <button class="nav-item" data-tab="tab-chat" id="nav-chat">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>AI Copilot Chat</span>
+          <span class="nav-badge">Agentic</span>
+        </button>
+        <button class="nav-item" data-tab="tab-workflow" id="nav-workflow">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span>Udyam Automation</span>
+          <span class="pulse-indicator"></span>
+        </button>
+        <button class="nav-item" data-tab="tab-ocr" id="nav-ocr">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Document OCR</span>
+        </button>
+        <button class="nav-item" data-tab="tab-gstin" id="nav-gstin">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>GSTIN Verifier</span>
+          <span class="nav-badge" style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan);">Live API</span>
+        </button>
+        <button class="nav-item" data-tab="tab-ledger" id="nav-ledger">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>43B(h) Ledger Scan</span>
+          <span class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber);">MSME</span>
+        </button>
+        <button class="nav-item" data-tab="tab-ca" id="nav-ca">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>CA Portfolio Hub</span>
+        </button>
+        <button class="nav-item" data-tab="tab-regulations" id="nav-regulations">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+          <span>Knowledge Base (32)</span>
+        </button>
+        <button class="nav-item" data-tab="tab-report" id="nav-report">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span>Audit Reports (PDF)</span>
+        </button>
+      </nav>
+
+      <!-- System Status Footer -->
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <span class="status-dot online"></span>
+          <span class="status-text">Rules Engine: 10 Active</span>
+        </div>
+        <div class="system-meta">RAG Corpus: 32 Indian Statutes</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main" id="main-content">
+      <!-- Top Header Bar -->
+      <header class="main-header">
+        <div class="header-left">
+          <h1 id="page-title" class="page-title">Compliance Audit Dashboard</h1>
+          <p id="page-subtitle" class="page-subtitle">Real-time statutory threshold evaluations and regulatory grounding for Indian enterprises</p>
+        </div>
+        <div class="header-right">
+          <div class="business-pill" id="active-business-badge">
+            <span class="pill-dot"></span>
+            <span id="header-biz-name" class="pill-text">ABC Traders (B005)</span>
+          </div>
+          <button id="btn-quick-download-pdf" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Download PDF</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: AUDIT DASHBOARD -->
+      <section class="tab-pane active" id="tab-dashboard">
+        <!-- Metric Scorecards -->
+        <div class="metrics-grid">
+          <div class="metric-card card-glow-rose">
+            <div class="metric-header">
+              <span class="metric-label">ACTIONABLE REQUIREMENTS</span>
+              <span class="metric-icon alert-icon">!</span>
+            </div>
+            <div class="metric-value" id="stat-applicable-count">0</div>
+            <div class="metric-footnote">Mandatory statutory obligations to register</div>
+          </div>
+
+          <div class="metric-card card-glow-emerald">
+            <div class="metric-header">
+              <span class="metric-label">EXEMPT / COMPLIANT</span>
+              <span class="metric-icon ok-icon">&#10003;</span>
+            </div>
+            <div class="metric-value" id="stat-exempt-count">0</div>
+            <div class="metric-footnote">Below threshold or within exemption limits</div>
+          </div>
+
+          <div class="metric-card card-glow-amber">
+            <div class="metric-header">
+              <span class="metric-label">HIGH SEVERITY RISKS</span>
+              <span class="metric-icon warn-icon">&#9888;</span>
+            </div>
+            <div class="metric-value" id="stat-high-sev-count">0</div>
+            <div class="metric-footnote">Subject to penalty, interest, or disallowance</div>
+          </div>
+
+          <div class="metric-card card-glow-indigo">
+            <div class="metric-header">
+              <span class="metric-label">HEALTH SCORE</span>
+              <span class="metric-icon info-icon">&#9679;</span>
+            </div>
+            <div class="metric-value" id="stat-health-score">--</div>
+            <div class="metric-footnote">Readiness rating based on statutory coverage</div>
+          </div>
+        </div>
+
+        <!-- Business Details Banner -->
+        <div class="glass-panel profile-banner-panel">
+          <div class="profile-banner-header">
+            <h3>Active Entity Profile Overview</h3>
+            <span class="badge badge-indigo" id="banner-biz-type">Goods Enterprise</span>
+          </div>
+          <div class="profile-grid" id="profile-details-grid">
+            <div class="profile-col">
+              <span class="col-label">Legal Owner / Director</span>
+              <span class="col-val" id="prof-owner">--</span>
+            </div>
+            <div class="profile-col">
+              <span class="col-label">Annual Turnover</span>
+              <span class="col-val" id="prof-turnover">₹ 0 Lakhs</span>
+            </div>
+            <div class="profile-col">
+              <span class="col-label">Employee Headcount</span>
+              <span class="col-val" id="prof-employees">0 Personnel</span>
+            </div>
+            <div class="profile-col">
+              <span class="col-label">Jurisdiction & State</span>
+              <span class="col-val" id="prof-state">Madhya Pradesh</span>
+            </div>
+            <div class="profile-col">
+              <span class="col-label">PAN Number</span>
+              <span class="col-val mono" id="prof-pan">--</span>
+            </div>
+            <div class="profile-col">
+              <span class="col-label">Registered Address</span>
+              <span class="col-val" id="prof-address">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Findings Table Panel -->
+        <div class="glass-panel findings-panel">
+          <div class="panel-header-with-actions">
+            <div>
+              <h3>Statutory Compliance Audit Findings</h3>
+              <p class="panel-subtext">Evaluated against 10 Indian statutory rules with real-time evidence cross-referencing</p>
+            </div>
+            <button id="btn-re-audit" class="btn btn-sm btn-outline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Re-evaluate</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="findings-table">
+              <thead>
+                <tr>
+                  <th>Statutory Requirement</th>
+                  <th>Applicability Status</th>
+                  <th>Severity</th>
+                  <th>Reasoning & Threshold Comparison</th>
+                  <th>Evidence Citation</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="findings-table-body">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: AI COPILOT CHAT -->
+      <section class="tab-pane" id="tab-chat">
+        <div class="chat-container glass-panel">
+          <div class="chat-header">
+            <div class="chat-header-info">
+              <div class="agent-avatar">AI</div>
+              <div>
+                <h3 class="chat-title">Compliance Copilot</h3>
+                <span class="chat-status"><span class="status-dot online"></span> Function Calling & RAG Grounding Enabled</span>
+              </div>
+            </div>
+            <div class="chat-header-actions">
+              <button id="btn-clear-chat" class="btn-xs btn-ghost">Clear</button>
+            </div>
+          </div>
+
+          <!-- Chat Conversation Stream -->
+          <div class="chat-messages" id="chat-messages-stream">
+            <div class="message-bubble message-assistant">
+              <div class="bubble-sender">SME Compliance Copilot</div>
+              <div class="bubble-content">
+                Hello! I am your SME Compliance & Audit Assistant. I can evaluate statutory thresholds for your business, cite provisions from the CGST Act, MSMED Act, and Labour Codes, initiate your Udyam registration workflow, or generate executive audit reports. How can I help you today?
+              </div>
+              <div class="suggested-prompts">
+                <button class="prompt-chip" data-prompt="Run a full statutory compliance audit on my business">Full Compliance Audit</button>
+                <button class="prompt-chip" data-prompt="What are my GST and Composition Scheme obligations?">Check GST & Composition</button>
+                <button class="prompt-chip" data-prompt="Start my Udyam MSME registration workflow">Start Udyam Workflow</button>
+                <button class="prompt-chip" data-prompt="Explain the Section 43B(h) 45-day payment rule for MSMEs">Explain Sec 43B(h)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input Controls -->
+          <div class="chat-input-wrapper">
+            <textarea id="chat-input-text" class="chat-input" placeholder="Ask anything about GST thresholds, MSME Udyam registration, PF/ESI, or 43B(h)..." rows="2"></textarea>
+            <button id="btn-chat-send" class="btn btn-primary btn-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: REGISTRATION AUTOMATION (UDYAM WORKFLOW) -->
+      <section class="tab-pane" id="tab-workflow">
+        <div class="workflow-dashboard glass-panel">
+          <div class="workflow-header">
+            <div>
+              <h3>Udyam MSME Registration Automation Engine</h3>
+              <p class="panel-subtext">Automates official portal pre-filling, layout validation, and handles mandatory Aadhaar OTP checkpoints truthfully.</p>
+            </div>
+            <div class="workflow-controls">
+              <label class="toggle-switch-label">
+                <input type="checkbox" id="wf-dryrun-toggle" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Simulation / Dry-Run</span>
+              </label>
+              <button id="btn-start-workflow" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Initiate Registration</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Visual Stepper Progress Bar -->
+          <div class="stepper-wrapper">
+            <div class="stepper-steps">
+              <div class="step-item active" id="step-node-ready">
+                <div class="step-number">1</div>
+                <div class="step-label">Ready</div>
+              </div>
+              <div class="step-connector" id="conn-1"></div>
+              <div class="step-item" id="step-node-collecting">
+                <div class="step-number">2</div>
+                <div class="step-label">Data Check</div>
+              </div>
+              <div class="step-connector" id="conn-2"></div>
+              <div class="step-item" id="step-node-validating">
+                <div class="step-number">3</div>
+                <div class="step-label">Validating</div>
+              </div>
+              <div class="step-connector" id="conn-3"></div>
+              <div class="step-item" id="step-node-running">
+                <div class="step-number">4</div>
+                <div class="step-label">Portal Pre-fill</div>
+              </div>
+              <div class="step-connector" id="conn-4"></div>
+              <div class="step-item" id="step-node-awaiting">
+                <div class="step-number">5</div>
+                <div class="step-label">Human OTP</div>
+              </div>
+              <div class="step-connector" id="conn-5"></div>
+              <div class="step-item" id="step-node-completed">
+                <div class="step-number">6</div>
+                <div class="step-label">Stage Verified</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Human-in-the-Loop Action Banner -->
+          <div class="hitl-action-card hidden" id="hitl-action-card">
+            <div class="hitl-badge">MANDATORY HUMAN AUTHORIZATION REQUIRED</div>
+            <h4 id="hitl-prompt-title">Aadhaar e-KYC Verification Checkpoint</h4>
+            <p id="hitl-prompt-desc">The official government portal requires UIDAI Aadhaar OTP verification to authenticate the applicant.</p>
+            <div class="hitl-form-inline">
+              <div class="otp-input-group">
+                <input type="text" id="input-otp" class="form-input otp-field" maxlength="6" placeholder="Enter 6-digit OTP (e.g. 654321)">
+                <button id="btn-submit-otp" class="btn btn-primary">Authorize & Resume Workflow</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side-by-side: Masked Credential Card & Live Event Log -->
+          <div class="workflow-grid-split">
+            <!-- Masked Credentials Panel -->
+            <div class="credential-card">
+              <h4>Pre-filled Portal Payload (Masked for Audit Privacy)</h4>
+              <div class="credential-row">
+                <span class="cred-label">Portal Destination</span>
+                <span class="cred-val highlight">udyamregistration.gov.in</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Enterprise Name</span>
+                <span class="cred-val" id="wf-cred-name">--</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Applicant Name</span>
+                <span class="cred-val" id="wf-cred-owner">--</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Aadhaar Number</span>
+                <span class="cred-val mono" id="wf-cred-aadhaar">XXXX-XXXX-XXXX</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Permanent Account Number (PAN)</span>
+                <span class="cred-val mono" id="wf-cred-pan">******</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Registered Mobile</span>
+                <span class="cred-val mono" id="wf-cred-mobile">******3210</span>
+              </div>
+              <div class="credential-row">
+                <span class="cred-label">Truthful Completion Guarantee</span>
+                <span class="cred-val safe-tag">&#10003; Never claims completion without genuine portal confirmation</span>
+              </div>
+            </div>
+
+            <!-- Live Event Log -->
+            <div class="terminal-card">
+              <div class="terminal-header">
+                <div class="terminal-buttons">
+                  <span class="tb-red"></span><span class="tb-yellow"></span><span class="tb-green"></span>
+                </div>
+                <span class="terminal-title">Workflow Execution Logs</span>
+              </div>
+              <div class="terminal-body" id="workflow-terminal-logs">
+                <div class="log-entry info">[Ready] Workflow engine standing by. Click 'Initiate Registration' to begin.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: SMART DOCUMENT OCR -->
+      <section class="tab-pane" id="tab-ocr">
+        <div class="ocr-dashboard glass-panel">
+          <div class="ocr-header">
+            <div>
+              <h3>Multimodal Document & Invoice Ingestion</h3>
+              <p class="panel-subtext">Upload business invoices, electricity utility bills, PAN cards, or GST certificates for automatic profile extraction using Gemini Multimodal Vision & heuristic parsing.</p>
+            </div>
+          </div>
+
+          <div class="upload-dropzone" id="upload-dropzone">
+            <svg class="upload-cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+              <path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>
+            </svg>
+            <h4>Drag & Drop your invoice or document here</h4>
+            <p class="upload-hint">Supports PDF, PNG, JPG (e.g. Tax Invoices, Utility Bills, PAN cards)</p>
+            <input type="file" id="file-input" class="hidden-file-input" accept=".pdf,.png,.jpg,.jpeg">
+            <button id="btn-browse-files" class="btn btn-secondary">Browse Local File</button>
+          </div>
+
+          <!-- Extraction Results Card -->
+          <div class="extraction-results-card hidden" id="extraction-results-card">
+            <div class="results-header">
+              <div>
+                <span class="badge badge-indigo" id="doc-type-badge">Tax Invoice</span>
+                <h4 id="doc-filename">Sample_Invoice.pdf</h4>
+              </div>
+              <div class="confidence-box">
+                <span class="confidence-label">Extraction Confidence:</span>
+                <span class="confidence-val" id="doc-confidence">95%</span>
+              </div>
+            </div>
+
+            <div class="extracted-fields-grid" id="extracted-fields-grid">
+              <!-- Dynamically Populated -->
+            </div>
+
+            <div class="results-footer">
+              <button id="btn-apply-extracted-profile" class="btn btn-primary">
+                <span>Use this Data to Run Compliance Audit</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: GSTIN VERIFIER -->
+      <section class="tab-pane" id="tab-gstin">
+        <div class="glass-panel">
+          <div class="panel-header-with-actions">
+            <div>
+              <h3>Official GSTIN Verification & Filing Health</h3>
+              <p class="panel-subtext">Validate 15-digit GSTINs, verify taxpayer jurisdiction, active status, and GSTR-1 / GSTR-3B return filing track record.</p>
+            </div>
+          </div>
+
+          <div class="gstin-search-bar-box" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 12px;">
+              <input type="text" id="gstin-search-input" class="search-input" style="padding-left: 14px; font-family: var(--font-mono); letter-spacing: 2px;" placeholder="Enter 15-character GSTIN (e.g. 23ABCDE1234F1Z5)" maxlength="15" value="23ABCDE1234F1Z5">
+              <button id="btn-verify-gstin" class="btn btn-primary" style="white-space: nowrap;">Verify GSTIN</button>
+              <button id="btn-import-gstin" class="btn btn-secondary" style="white-space: nowrap;">Import to Registry</button>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 8px; align-items: center;">
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Quick-Test Taxpayers:</span>
+              <button class="prompt-chip gstin-quick-pill" data-gstin="23ABCDE1234F1Z5">ABC Traders (23 - MP)</button>
+              <button class="prompt-chip gstin-quick-pill" data-gstin="27AAACP1234M1Z2">Patel IT (27 - MH)</button>
+              <button class="prompt-chip gstin-quick-pill" data-gstin="29AABCR9876K1Z9">Rao Mfg (29 - KA)</button>
+            </div>
+          </div>
+
+          <!-- GSTIN Verification Result Card -->
+          <div class="gstin-result-card hidden" id="gstin-result-card">
+            <div class="profile-banner-header">
+              <div>
+                <span class="badge badge-emerald" id="gstin-res-status">ACTIVE TAXPAYER</span>
+                <h3 id="gstin-res-legal-name" style="margin-top: 6px;">--</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="gstin-res-trade-name">--</span>
+              </div>
+              <div style="text-align: right;">
+                <span class="citation-pill" id="gstin-res-number" style="font-size: 0.9rem;">--</span>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;" id="gstin-res-type">Regular Taxpayer</div>
+              </div>
+            </div>
+
+            <div class="profile-grid" style="margin-bottom: 24px;">
+              <div class="profile-col">
+                <span class="col-label">State Jurisdiction</span>
+                <span class="col-val" id="gstin-res-state">--</span>
+              </div>
+              <div class="profile-col">
+                <span class="col-label">Center Jurisdiction</span>
+                <span class="col-val" id="gstin-res-center">--</span>
+              </div>
+              <div class="profile-col">
+                <span class="col-label">Registration Date</span>
+                <span class="col-val" id="gstin-res-regdate">--</span>
+              </div>
+              <div class="profile-col">
+                <span class="col-label">PAN Number</span>
+                <span class="col-val mono" id="gstin-res-pan">--</span>
+              </div>
+              <div class="profile-col">
+                <span class="col-label">Constitution of Business</span>
+                <span class="col-val" id="gstin-res-entity">Proprietorship / Entity</span>
+              </div>
+              <div class="profile-col">
+                <span class="col-label">Data Source</span>
+                <span class="col-val" id="gstin-res-source">Verified Directory</span>
+              </div>
+            </div>
+
+            <!-- Filing History Table -->
+            <h4 style="font-family: var(--font-display); font-size: 1rem; margin-bottom: 12px; color: #fff;">Return Filing Track Record</h4>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Return Type</th>
+                    <th>Tax Period</th>
+                    <th>Date of Filing</th>
+                    <th>Filing Status</th>
+                  </tr>
+                </thead>
+                <tbody id="gstin-filing-tbody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: 43B(H) LEDGER SCANNER -->
+      <section class="tab-pane" id="tab-ledger">
+        <div class="glass-panel">
+          <div class="panel-header-with-actions">
+            <div>
+              <h3>Section 43B(h) Vendor Ledger & Payment Aging Scanner</h3>
+              <p class="panel-subtext">Audit vendor purchase ledgers for delayed payments to Micro & Small enterprises beyond statutory 45/15 days. Compute disallowed income tax exposure & 3x RBI compound penal interest.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button id="btn-download-sample-ledger" class="btn btn-secondary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                <span>Download Sample Ledger</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ledger Dropzone -->
+          <div class="upload-dropzone" id="ledger-dropzone" style="padding: 36px 20px;">
+            <svg class="upload-cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <h4>Drag & Drop your Purchase Ledger (CSV)</h4>
+            <p class="upload-hint">Audits invoice dates against 45-day MSMED limits & flags taxable disallowances</p>
+            <input type="file" id="ledger-file-input" class="hidden-file-input" accept=".csv">
+            <button id="btn-browse-ledger" class="btn btn-secondary">Browse CSV File</button>
+          </div>
+
+          <!-- Ledger Results View -->
+          <div class="ledger-results-container hidden" id="ledger-results-container">
+            <!-- 4 Summary Metric Cards -->
+            <div class="metrics-grid" style="margin-bottom: 24px;">
+              <div class="metric-card card-glow-indigo">
+                <div class="metric-header"><span class="metric-label">TOTAL PURCHASES</span><span class="metric-icon info-icon">&#8377;</span></div>
+                <div class="metric-value" id="ledger-stat-total-purchases">₹0</div>
+                <div class="metric-footnote" id="ledger-stat-total-invoices">0 Invoices Analyzed</div>
+              </div>
+              <div class="metric-card card-glow-rose">
+                <div class="metric-header"><span class="metric-label">43B(h) DISALLOWANCE</span><span class="metric-icon alert-icon">!</span></div>
+                <div class="metric-value" id="ledger-stat-disallowed">₹0</div>
+                <div class="metric-footnote">Tax deduction lost; added back to profit</div>
+              </div>
+              <div class="metric-card card-glow-amber">
+                <div class="metric-header"><span class="metric-label">TAX LIABILITY EXPOSURE</span><span class="metric-icon warn-icon">&#9888;</span></div>
+                <div class="metric-value" id="ledger-stat-tax-risk">₹0</div>
+                <div class="metric-footnote">Estimated at 26% Corporate/Entity Tax</div>
+              </div>
+              <div class="metric-card card-glow-rose">
+                <div class="metric-header"><span class="metric-label">STATUTORY PENAL INTEREST</span><span class="metric-icon alert-icon">%</span></div>
+                <div class="metric-value" id="ledger-stat-interest">₹0</div>
+                <div class="metric-footnote">Compounded monthly at 19.5% p.a. (3x RBI)</div>
+              </div>
+            </div>
+
+            <!-- Invoices Table -->
+            <h4 style="font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 12px; color: #fff;">Prioritized Invoice Aging & Section 43B(h) Audit List</h4>
+            <div class="table-responsive">
+              <table class="data-table" id="ledger-invoices-table">
+                <thead>
+                  <tr>
+                    <th>Invoice No</th>
+                    <th>Vendor Name</th>
+                    <th>MSME Category</th>
+                    <th>Amount</th>
+                    <th>Invoice Date</th>
+                    <th>Elapsed / Due</th>
+                    <th>Section 43B(h) Status</th>
+                    <th>Statutory Interest</th>
+                  </tr>
+                </thead>
+                <tbody id="ledger-invoices-tbody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: CA PORTFOLIO HUB -->
+      <section class="tab-pane" id="tab-ca">
+        <div class="glass-panel">
+          <div class="panel-header-with-actions">
+            <div>
+              <h3>Chartered Accountant (CA) Multi-Client Portfolio Hub</h3>
+              <p class="panel-subtext">Holistic compliance health monitoring, statutory filing calendar, and high-risk entity alerts across all managed SME clients.</p>
+            </div>
+            <button id="btn-refresh-ca-portfolio" class="btn btn-sm btn-outline">Refresh Portfolio</button>
+          </div>
+
+          <!-- Portfolio Stats -->
+          <div class="metrics-grid" style="margin-bottom: 24px;">
+            <div class="metric-card card-glow-indigo">
+              <div class="metric-header"><span class="metric-label">TOTAL CLIENTS</span><span class="metric-icon info-icon">&#128188;</span></div>
+              <div class="metric-value" id="ca-stat-clients">5</div>
+              <div class="metric-footnote">Active SMEs in Portfolio</div>
+            </div>
+            <div class="metric-card card-glow-rose">
+              <div class="metric-header"><span class="metric-label">HIGH RISK CLIENTS</span><span class="metric-icon alert-icon">!</span></div>
+              <div class="metric-value" id="ca-stat-high-risk">1</div>
+              <div class="metric-footnote">Unregistered with high turnover</div>
+            </div>
+            <div class="metric-card card-glow-emerald">
+              <div class="metric-header"><span class="metric-label">AVERAGE HEALTH SCORE</span><span class="metric-icon ok-icon">&#10003;</span></div>
+              <div class="metric-value" id="ca-stat-avg-score">76%</div>
+              <div class="metric-footnote">Across all 10 statutory rules</div>
+            </div>
+            <div class="metric-card card-glow-amber">
+              <div class="metric-header"><span class="metric-label">TOTAL TURNOVER</span><span class="metric-icon warn-icon">&#8377;</span></div>
+              <div class="metric-value" id="ca-stat-total-turnover">₹302L</div>
+              <div class="metric-footnote">Aggregate Monitored Volume</div>
+            </div>
+          </div>
+
+          <!-- Client Portfolio Table -->
+          <h4 style="font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 12px; color: #fff;">Client Risk & Compliance Scorecard</h4>
+          <div class="table-responsive">
+            <table class="data-table" id="ca-client-table">
+              <thead>
+                <tr>
+                  <th>Client Enterprise</th>
+                  <th>Type & State</th>
+                  <th>Turnover</th>
+                  <th>Headcount</th>
+                  <th>Applicable Obligations</th>
+                  <th>Health Score</th>
+                  <th>Risk Tier</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ca-client-tbody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: REGULATORY KNOWLEDGE BASE (32 RULES) -->
+      <section class="tab-pane" id="tab-regulations">
+        <div class="regulations-dashboard glass-panel">
+          <div class="reg-search-bar-wrapper">
+            <div class="search-input-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
+              <input type="text" id="reg-search-input" class="search-input" placeholder="Search 32 Indian statutory regulations (e.g., GST thresholds, 43B(h), PF/ESI, Udyam, FSSAI)...">
+            </div>
+            <div class="category-filters" id="category-filters">
+              <button class="filter-chip active" data-category="all">All (32)</button>
+              <button class="filter-chip" data-category="GST">GST</button>
+              <button class="filter-chip" data-category="MSME">MSME / Udyam</button>
+              <button class="filter-chip" data-category="Labour Law">Labour & Social</button>
+              <button class="filter-chip" data-category="Professional Tax">Professional Tax</button>
+              <button class="filter-chip" data-category="Food Safety">FSSAI</button>
+              <button class="filter-chip" data-category="Income Tax">Income Tax & 43B(h)</button>
+            </div>
+          </div>
+
+          <div class="regulations-grid" id="regulations-card-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: AUDIT REPORTS -->
+      <section class="tab-pane" id="tab-report">
+        <div class="report-center glass-panel">
+          <div class="report-center-header">
+            <div>
+              <h3>Official Statutory Audit Dossiers</h3>
+              <p class="panel-subtext">Generate and download executive-ready compliance audit PDF dossiers with penalty risk matrices and filing calendars.</p>
+            </div>
+            <button id="btn-generate-pdf-now" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              <span>Generate & Download Dossier</span>
+            </button>
+          </div>
+
+          <!-- Report Features Preview Grid -->
+          <div class="report-features-grid">
+            <div class="feature-box">
+              <div class="feature-icon">&#128221;</div>
+              <h4>Compliance Health Scorecard</h4>
+              <p>Executive visual summary breakdown of mandatory versus exempt statutes for leadership review.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-icon">&#9878;</div>
+              <h4>Statutory Evidence Citations</h4>
+              <p>Exact cross-references to CGST Act, MSMED Act 2006, and State Shops & Establishments codes.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-icon">&#128197;</div>
+              <h4>Statutory Filing Calendar</h4>
+              <p>Critical monthly and quarterly due dates for GSTR-1, GSTR-3B, EPF, ESIC, and Advance Tax.</p>
+            </div>
+            <div class="feature-box">
+              <div class="feature-icon">&#9888;</div>
+              <h4>Penalty & Disallowance Matrix</h4>
+              <p>Quantified tax disallowance warnings under Section 43B(h) and interest liabilities under GST law.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Custom Business Profile Modal -->
+  <div class="modal-overlay hidden" id="custom-biz-modal">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3>Create / Evaluate Custom Business Profile</h3>
+        <button id="btn-close-modal" class="btn-xs btn-ghost">&times;</button>
+      </div>
+      <form id="custom-biz-form" class="modal-body-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-name">Enterprise Name</label>
+            <input type="text" id="cust-name" required value="Apex Dynamics">
+          </div>
+          <div class="form-group">
+            <label for="cust-type">Sector Type</label>
+            <select id="cust-type">
+              <option value="goods">Goods (Trading/Manufacturing)</option>
+              <option value="services">Services / Consulting</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-turnover">Annual Turnover (₹ Lakhs)</label>
+            <input type="number" id="cust-turnover" step="0.1" required value="65.0">
+          </div>
+          <div class="form-group">
+            <label for="cust-employees">Employee Headcount</label>
+            <input type="number" id="cust-employees" required value="12">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cust-state">State of Operation</label>
+            <input type="text" id="cust-state" required value="Maharashtra">
+          </div>
+          <div class="form-group">
+            <label for="cust-activity">Primary Activity Description</label>
+            <input type="text" id="cust-activity" value="Software development & IT consulting">
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" id="btn-cancel-modal" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-primary">Audit Custom Business</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -20,9 +20,17 @@ class BusinessProfile:
     state: str
     registration_status: str = "unregistered"
     special_category_state: bool = False  # HP, Uttarakhand, NE states etc. -> lower GST threshold
+    owner: Optional[str] = None
+    pan: Optional[str] = None
+    gstin: Optional[str] = None
+    mobile: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
+    activity: Optional[str] = None
+    aadhaar: Optional[str] = None
 
     def as_dict(self):
-        return {
+        d = {
             "business_id": self.business_id,
             "name": self.name,
             "business_type": self.business_type,
@@ -32,6 +40,11 @@ class BusinessProfile:
             "registration_status": self.registration_status,
             "special_category_state": self.special_category_state,
         }
+        for field_name in ["owner", "pan", "gstin", "mobile", "email", "address", "activity", "aadhaar"]:
+            val = getattr(self, field_name)
+            if val is not None:
+                d[field_name] = val
+        return d
 
 
 # ---- Sample businesses used for testing the rules engine ----
@@ -72,6 +85,22 @@ SAMPLE_BUSINESSES = [
         state="Himachal Pradesh",
         registration_status="unregistered",
         special_category_state=True,
+    ),
+    BusinessProfile(
+        business_id="B005",
+        name="ABC Traders",
+        business_type="goods",
+        turnover_lakh=45,
+        employee_count=4,
+        state="Madhya Pradesh",
+        owner="Rahul Sharma",
+        address="Indore, Madhya Pradesh",
+        activity="Wholesale trading",
+        pan="ABCDE1234F",
+        gstin="23ABCDE1234F1Z5",
+        mobile="9876543210",
+        email="rahul.sharma@example.com",
+        aadhaar="987654321098",
     ),
 ]
 

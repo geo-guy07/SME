@@ -70,9 +70,12 @@ class VectorStore:
             metadata={"hnsw:space": "cosine"},
         )
         print("  [VectorStore] Collection ready --", self._collection.count(), "docs stored.")
+        # Ensure knowledge base documents and BM25 index are loaded
+        from rag.regulations import REGULATIONS
+        self.ingest(REGULATIONS)
 
     def ingest(self, documents, overwrite=False):
-        if overwrite:
+        if overwrite:   
             self._client.delete_collection(self.collection_name)
             self._collection = self._client.get_or_create_collection(
                 name=self.collection_name, embedding_function=self._embed_fn,
@@ -98,7 +101,7 @@ class VectorStore:
         n_fetch = min(top_k * 2, self._collection.count())
         vr = self._collection.query(query_texts=[query], n_results=n_fetch, where=where)
         vids = vr["ids"][0]
-        vdists = vr["distances"][0]
+        vdists = vr["distances"][0] 
         id_vscore = {did: 1.0 - dist for did, dist in zip(vids, vdists)}
         bids, id_bscore = [], {}
         if hybrid and self._bm25:
@@ -140,12 +143,7 @@ class VectorStore:
 
 
 if __name__ == "__main__":
-    from rag.regulations import REGULATIONS
-
-    print("=" * 60)
-    print("SME COMPLIANCE -- VECTOR STORE SETUP TEST")
-    print("=" * 60)
-
+    from regulations import REGULATIONS
     store = VectorStore()
     store.ingest(REGULATIONS)
 
