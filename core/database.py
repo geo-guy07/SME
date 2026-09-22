@@ -1,12 +1,21 @@
 """
-Database Layer — SME Compliance & Audit Assistant
-Relational persistence using SQLite & SQLAlchemy matching the SME Audit ER diagram.
+Database Connection & ORM Models — SME Compliance Assistant
+PostgreSQL persistence layer using SQLAlchemy 2.0.
+
+Tables:
+- users: Application users (owners, accountants, compliance officers)
+- businesses: SME profile data evaluated by the rules engine
+- document_uploads: Photos and documents uploaded by users (GST certs, PAN, invoices)
+- findings: Statutory compliance evaluation results generated for a business
+- workflow_records: State transitions and audit logs for automated portal workflows
 """
 
 import os
+import re
 import json
 from datetime import datetime
-from typing import List, Dict, Any, Optional
+from typing import Optional, Dict, Any, List
+
 from sqlalchemy import (
     create_engine,
     Column,
@@ -17,242 +26,259 @@ from sqlalchemy import (
     Text,
     DateTime,
     ForeignKey,
+    Index,
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "sme_audit.db")
-DATABASE_URL = f"sqlite:///{DB_PATH}"
-
-engine = create_engine(DATABASE_URL, echo=False, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+# Default PostgreSQL connection settings
+DB_USER = os.environ.get("POSTGRES_USER", "postgres")
+DB_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
+DB_HOST = os.environ.get("POSTGRES_HOST", "localhost")
+DB_PORT = os.environ.get("POSTGRES_PORT", "5432")
+DB_NAME = os.environ.get("POSTGRES_DB", "sme_audit_db")
+
+DEFAULT_DATABASE_URL = (
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+DATABASE_URL = os.environ.get("DATABASE_URL", DEFAULT_DATABASE_URL)
+
+
+def ensure_database_exists(db_name: str = DB_NAME):
+    """Ensure that the target PostgreSQL database exists; if not, create it."""
+    try:
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            dbname="postgres",
+            connect_timeout=3,
+        )
+        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM pg_database WHERE datname = %s;", (db_name,))
+        exists = cur.fetchone()
+        if not exists:
+            # Safe SQL identifier creation
+            cur.execute(f'CREATE DATABASE "{db_name}";')
+            print(f"  [PostgreSQL] Created new database '{db_name}'.")
+        cur.close()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"  [PostgreSQL] Notice: Could not connect to ensure database '{db_name}' exists: {e}")
+        return False
+
+
+# Global engine and sessionmaker
+_engine = None
+_SessionLocal = None
+
+
+def get_engine():
+    global _engine
+    if _engine is None:
+        ensure_database_exists(DB_NAME)
+        _engine = create_engine(
+            DATABASE_URL,
+            pool_size=5,
+            max_overflow=10,
+            pool_pre_ping=True,
+            connect_args={"connect_timeout": 3},
+        )
+    return _engine
+
+
+def get_session():
+    global _SessionLocal
+    if _SessionLocal is None:
+        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+    return _SessionLocal()
+
+
+# ==========================================
+# ORM Models
+# ==========================================
+
+class User(Base):
+    """Registered application user (business owner, accountant, compliance officer)."""
+    __tablename__ = "users"
+
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(200), nullable=False)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    phone = Column(String(50), nullable=True)
+    role = Column(String(50), default="owner")  # 'owner', 'accountant', 'compliance_officer', 'ca'
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    businesses = relationship("Business", back_populates="user", cascade="all, delete-orphan")
+    documents = relationship("DocumentUpload", back_populates="user")
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "email": self.email,
+            "phone": self.phone,
+            "role": self.role,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 
 
 class Business(Base):
+    """SME profile evaluated against statutory compliance thresholds."""
     __tablename__ = "businesses"
 
-    business_id = Column(String(50), primary_key=True, index=True)
-    name = Column(String(200), nullable=False)
-    type = Column(String(50), default="goods")
-    turnover = Column(Float, default=0.0)  # in Lakhs
+    business_id = Column(String(50), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=True)
+    name = Column(String(255), nullable=False)
+    business_type = Column(String(50), default="goods")  # 'goods' or 'services'
+    turnover_lakh = Column(Float, default=0.0)
     employee_count = Column(Integer, default=1)
     state = Column(String(100), default="Madhya Pradesh")
+    registration_status = Column(String(100), default="unregistered")
     special_category_state = Column(Boolean, default=False)
-    registration_status = Column(String(100), default="ACTIVE")
-    owner = Column(String(100), nullable=True)
-    activity = Column(String(200), nullable=True)
-    address = Column(String(300), nullable=True)
+    owner = Column(String(200), nullable=True)
     pan = Column(String(20), nullable=True)
-    mobile = Column(String(20), nullable=True)
-    email = Column(String(100), nullable=True)
-    aadhaar = Column(String(20), nullable=True)
+    gstin = Column(String(30), nullable=True)
+    mobile = Column(String(50), nullable=True)
+    email = Column(String(255), nullable=True)
+    address = Column(Text, nullable=True)
+    activity = Column(String(255), nullable=True)
+    aadhaar_masked = Column(String(30), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    users = relationship("User", back_populates="business", cascade="all, delete-orphan")
-    findings = relationship("FindingRecord", back_populates="business", cascade="all, delete-orphan")
-    uploads = relationship("DocumentUpload", back_populates="business", cascade="all, delete-orphan")
-    sessions = relationship("QuerySession", back_populates="business", cascade="all, delete-orphan")
-    workflows = relationship("WorkflowRecord", back_populates="business", cascade="all, delete-orphan")
+    user = relationship("User", back_populates="businesses")
+    documents = relationship("DocumentUpload", back_populates="business", cascade="all, delete-orphan")
+    findings = relationship("AuditFinding", back_populates="business", cascade="all, delete-orphan")
+    workflow_records = relationship("WorkflowRecord", back_populates="business", cascade="all, delete-orphan")
 
     def as_dict(self) -> Dict[str, Any]:
         return {
             "business_id": self.business_id,
+            "user_id": self.user_id,
             "name": self.name,
-            "business_type": self.type,
-            "turnover_lakh": self.turnover,
+            "business_type": self.business_type,
+            "turnover_lakh": self.turnover_lakh,
             "employee_count": self.employee_count,
             "state": self.state,
-            "special_category_state": self.special_category_state,
             "registration_status": self.registration_status,
+            "special_category_state": self.special_category_state,
             "owner": self.owner,
-            "activity": self.activity,
-            "address": self.address,
             "pan": self.pan,
+            "gstin": self.gstin,
             "mobile": self.mobile,
             "email": self.email,
-            "aadhaar": self.aadhaar,
+            "address": self.address,
+            "activity": self.activity,
+            "aadhaar": self.aadhaar_masked,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
 
-class User(Base):
-    __tablename__ = "users"
+class DocumentUpload(Base):
+    """Document or photo uploaded by the user, analyzed via Gemini Vision OCR."""
+    __tablename__ = "document_uploads"
 
-    user_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
-    phone = Column(String(20), nullable=True)
-    email = Column(String(100), nullable=True)
-    role = Column(String(50), default="OWNER")
-    business_id = Column(String(50), ForeignKey("businesses.business_id"), nullable=True)
+    upload_id = Column(Integer, primary_key=True, autoincrement=True)
+    business_id = Column(String(50), ForeignKey("businesses.business_id", ondelete="CASCADE"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"), nullable=True)
+    file_name = Column(String(255), nullable=False)
+    file_path = Column(Text, nullable=False)
+    document_type = Column(String(100), default="UNKNOWN")  # GST_CERTIFICATE, PAN_CARD, INVOICE, UTILITY_BILL
+    extracted_data = Column(Text, nullable=True)  # JSON string of OCR-extracted fields
+    confidence_score = Column(Float, default=1.0)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    business = relationship("Business", back_populates="users")
+    # Relationships
+    business = relationship("Business", back_populates="documents")
+    user = relationship("User", back_populates="documents")
+
+    def as_dict(self) -> Dict[str, Any]:
+        extracted = {}
+        if self.extracted_data:
+            try:
+                extracted = json.loads(self.extracted_data)
+            except Exception:
+                extracted = {"raw": self.extracted_data}
+        return {
+            "upload_id": self.upload_id,
+            "business_id": self.business_id,
+            "user_id": self.user_id,
+            "file_name": self.file_name,
+            "file_path": self.file_path,
+            "document_type": self.document_type,
+            "extracted_data": extracted,
+            "confidence_score": self.confidence_score,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 
 
-class FindingRecord(Base):
+class AuditFinding(Base):
+    """Compliance finding generated by the statutory rules engine."""
     __tablename__ = "findings"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    business_id = Column(String(50), ForeignKey("businesses.business_id"), nullable=False, index=True)
+    finding_id = Column(Integer, primary_key=True, autoincrement=True)
+    business_id = Column(String(50), ForeignKey("businesses.business_id", ondelete="CASCADE"), nullable=False)
     requirement = Column(String(200), nullable=False)
     applies = Column(Boolean, nullable=False)
     reason = Column(Text, nullable=False)
-    evidence_id = Column(String(50), nullable=False)
-    severity = Column(String(20), default="MEDIUM")
+    evidence_id = Column(String(50), nullable=False)  # e.g., GST-001, MSME-001
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # Relationships
     business = relationship("Business", back_populates="findings")
 
     def as_dict(self) -> Dict[str, Any]:
         return {
-            "id": self.id,
+            "finding_id": self.finding_id,
             "business_id": self.business_id,
             "requirement": self.requirement,
             "applies": self.applies,
             "reason": self.reason,
             "evidence_id": self.evidence_id,
-            "severity": self.severity,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
 
-class QuerySession(Base):
-    __tablename__ = "query_sessions"
-
-    session_id = Column(String(100), primary_key=True, index=True)
-    business_id = Column(String(50), ForeignKey("businesses.business_id"), nullable=True)
-    summary = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    business = relationship("Business", back_populates="sessions")
-    tool_calls = relationship("ToolCallLog", back_populates="session", cascade="all, delete-orphan")
-
-
-class ToolCallLog(Base):
-    __tablename__ = "tool_call_logs"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    session_id = Column(String(100), ForeignKey("query_sessions.session_id"), nullable=True, index=True)
-    tool_name = Column(String(100), nullable=False)
-    arguments_json = Column(Text, nullable=True)
-    result_json = Column(Text, nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
-
-    session = relationship("QuerySession", back_populates="tool_calls")
-
-
-class DocumentUpload(Base):
-    __tablename__ = "document_uploads"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    business_id = Column(String(50), ForeignKey("businesses.business_id"), nullable=True, index=True)
-    filename = Column(String(255), nullable=False)
-    file_type = Column(String(50), nullable=True)
-    file_size_bytes = Column(Integer, default=0)
-    extracted_metadata_json = Column(Text, nullable=True)
-    uploaded_at = Column(DateTime, default=datetime.utcnow)
-
-    business = relationship("Business", back_populates="uploads")
-
-
 class WorkflowRecord(Base):
+    """State machine transitions and execution records for compliance workflows."""
     __tablename__ = "workflow_records"
 
-    workflow_id = Column(String(100), primary_key=True, index=True)
-    business_id = Column(String(50), ForeignKey("businesses.business_id"), nullable=True)
-    workflow_name = Column(String(100), default="Udyam/MSME Registration")
-    status = Column(String(50), default="READY")
-    pending_action_json = Column(Text, nullable=True)
-    result_json = Column(Text, nullable=True)
-    steps_log_json = Column(Text, nullable=True)
+    workflow_id = Column(String(100), primary_key=True)
+    business_id = Column(String(50), ForeignKey("businesses.business_id", ondelete="CASCADE"), nullable=False)
+    workflow_name = Column(String(200), nullable=False)
+    status = Column(String(50), nullable=False)  # READY, RUNNING, AWAITING_USER, COMPLETED, FAILED
+    stage = Column(String(100), nullable=True)
+    steps_log = Column(Text, nullable=True)  # JSON array of step details
+    created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    business = relationship("Business", back_populates="workflows")
+    # Relationships
+    business = relationship("Business", back_populates="workflow_records")
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def init_db():
-    """Create all tables and seed sample businesses if not existing."""
-    Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    try:
-        from core.business_profile import SAMPLE_BUSINESSES
-        for biz in SAMPLE_BUSINESSES:
-            existing = db.query(Business).filter(Business.business_id == biz.business_id).first()
-            if not existing:
-                b = Business(
-                    business_id=biz.business_id,
-                    name=biz.name,
-                    type=biz.business_type,
-                    turnover=biz.turnover_lakh,
-                    employee_count=biz.employee_count,
-                    state=biz.state,
-                    special_category_state=biz.special_category_state,
-                    owner=biz.owner,
-                    activity=biz.activity,
-                    address=biz.address,
-                    pan=biz.pan,
-                    mobile=biz.mobile,
-                    email=biz.email,
-                    aadhaar=biz.aadhaar,
-                )
-                db.add(b)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"  [Database] Init seeding note: {e}")
-    finally:
-        db.close()
-
-
-def log_tool_call(session_id: str, tool_name: str, args: Any, result: Any):
-    """Record an agent tool call into the database."""
-    db = SessionLocal()
-    try:
-        log = ToolCallLog(
-            session_id=session_id,
-            tool_name=tool_name,
-            arguments_json=json.dumps(args, default=str),
-            result_json=json.dumps(result, default=str),
-        )
-        db.add(log)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"  [Database] Failed to log tool call: {e}")
-    finally:
-        db.close()
-
-
-def persist_findings(business_id: str, findings: List[Dict[str, Any]]):
-    """Save compliance findings for a business."""
-    db = SessionLocal()
-    try:
-        # Clear prior findings for fresh audit run
-        db.query(FindingRecord).filter(FindingRecord.business_id == business_id).delete()
-        for f in findings:
-            record = FindingRecord(
-                business_id=business_id,
-                requirement=f.get("requirement", ""),
-                applies=f.get("applies", False),
-                reason=f.get("reason", ""),
-                evidence_id=f.get("evidence_id", ""),
-                severity=f.get("severity", "MEDIUM"),
-            )
-            db.add(record)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"  [Database] Failed to persist findings: {e}")
-    finally:
-        db.close()
-
-
-# Ensure tables are initialized upon module load
-init_db()
+    def as_dict(self) -> Dict[str, Any]:
+        steps = []
+        if self.steps_log:
+            try:
+                steps = json.loads(self.steps_log)
+            except Exception:
+                steps = []
+        return {
+            "workflow_id": self.workflow_id,
+            "business_id": self.business_id,
+            "workflow_name": self.workflow_name,
+            "status": self.status,
+            "stage": self.stage,
+            "steps": steps,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }

@@ -97,41 +97,16 @@ def resume_udyam_registration(workflow_id: str, otp: str = None, missing_data: d
     return resume_udyam_workflow(workflow_id=workflow_id, user_action=action)
 
 
-def generate_compliance_report(business_id: str = ACTIVE_BUSINESS_ID):
-    """
-    Generate an executive PDF compliance dossier and audit scorecard for a business.
-    Returns the file path to the generated audit PDF.
-    """
-    from core.report_generator import generate_pdf_report
-    try:
-        pdf_path = generate_pdf_report(business_id)
-        return {"status": "SUCCESS", "report_path": pdf_path, "business_id": business_id}
-    except Exception as e:
-        return {"error": f"Report generation failed: {str(e)}"}
+from core.doc_extractor import ingest_document_photo
 
 
-def extract_document_tool(file_path: str, business_id: str = ACTIVE_BUSINESS_ID):
+def upload_and_extract_document(image_path: str, business_id: str = None):
     """
-    Extract structured identity, turnover, and address data from an invoice or certificate.
+    Ingest a document photo (GST certificate, PAN card, utility bill, tax invoice)
+    using Gemini Vision OCR, extract structured compliance details, and persist them
+    directly into PostgreSQL.
     """
-    from core.doc_extractor import extract_document
-    return extract_document(file_path=file_path, business_id=business_id)
-
-
-def verify_gstin_tool(gstin: str):
-    """
-    Validate a 15-character Indian GSTIN and return taxpayer status, jurisdiction, and filing track record.
-    """
-    from core.gstin_checker import verify_gstin
-    return verify_gstin(gstin)
-
-
-def analyze_vendor_ledger_tool(csv_content: str):
-    """
-    Analyze accounts payable ledger for Section 43B(h) overdue payments and compute 3x RBI compound penal interest.
-    """
-    from core.ledger_analyzer import parse_csv_ledger
-    return parse_csv_ledger(csv_content)
+    return ingest_document_photo(image_path=image_path, business_id=business_id)
 
 
 TOOLS = {
@@ -140,10 +115,7 @@ TOOLS = {
     "check_requirements": check_requirements_tool,
     "start_udyam_registration": start_udyam_registration,
     "resume_udyam_registration": resume_udyam_registration,
-    "generate_compliance_report": generate_compliance_report,
-    "extract_document": extract_document_tool,
-    "verify_gstin": verify_gstin_tool,
-    "analyze_vendor_ledger": analyze_vendor_ledger_tool,
+    "upload_and_extract_document": upload_and_extract_document,
 }
 
 
@@ -160,10 +132,7 @@ def run_agent_with_gemini(user_prompt: str):
             check_requirements_tool,
             start_udyam_registration,
             resume_udyam_registration,
-            generate_compliance_report,
-            extract_document_tool,
-            verify_gstin_tool,
-            analyze_vendor_ledger_tool,
+            upload_and_extract_document,
         ],
         temperature=0.2,
     )
@@ -173,6 +142,7 @@ def run_agent_with_gemini(user_prompt: str):
     )
     response = chat.send_message(user_prompt)
     return response.text
+
 
 
 def run_deterministic_agent_trace(business_id: str = ACTIVE_BUSINESS_ID):

@@ -114,29 +114,6 @@ class ComplianceWorkflow:
         self.steps.append(step)
         print(f"  [Workflow: {self.name}] {old_status.value} -> {new_status.value} | {message}")
 
-        # Persist to database if available
-        try:
-            from core.database import SessionLocal, WorkflowRecord
-            import json
-            db = SessionLocal()
-            rec = db.query(WorkflowRecord).filter(WorkflowRecord.workflow_id == self.workflow_id).first()
-            if not rec:
-                rec = WorkflowRecord(
-                    workflow_id=self.workflow_id,
-                    business_id=self.business_data.get("business_id"),
-                    workflow_name=self.name,
-                    status=new_status.value,
-                )
-                db.add(rec)
-            rec.status = new_status.value
-            rec.pending_action_json = json.dumps(mask_dict(self.pending_user_action)) if self.pending_user_action else None
-            rec.result_json = json.dumps(mask_dict(self.result)) if self.result else None
-            rec.steps_log_json = json.dumps([s.as_dict() for s in self.steps])
-            db.commit()
-            db.close()
-        except Exception:
-            pass
-
     def determine_missing_fields(self) -> List[str]:
         raise NotImplementedError
 

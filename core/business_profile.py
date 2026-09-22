@@ -106,7 +106,38 @@ SAMPLE_BUSINESSES = [
 
 
 def get_business(business_id: str) -> Optional[BusinessProfile]:
+    """
+    Retrieve a business profile by ID.
+    Queries PostgreSQL database first; falls back seamlessly to in-memory
+    SAMPLE_BUSINESSES if database is unreachable or record is not found.
+    """
+    try:
+        from core.db_service import get_business_from_db
+        db_data = get_business_from_db(business_id)
+        if db_data:
+            return BusinessProfile(
+                business_id=db_data["business_id"],
+                name=db_data["name"],
+                business_type=db_data.get("business_type", "goods"),
+                turnover_lakh=float(db_data.get("turnover_lakh") or 0.0),
+                employee_count=int(db_data.get("employee_count") or 1),
+                state=db_data.get("state", "Madhya Pradesh"),
+                registration_status=db_data.get("registration_status", "unregistered"),
+                special_category_state=bool(db_data.get("special_category_state", False)),
+                owner=db_data.get("owner"),
+                pan=db_data.get("pan"),
+                gstin=db_data.get("gstin"),
+                mobile=db_data.get("mobile"),
+                email=db_data.get("email"),
+                address=db_data.get("address"),
+                activity=db_data.get("activity"),
+                aadhaar=db_data.get("aadhaar"),
+            )
+    except Exception:
+        pass
+
+    # Fallback to static sample businesses
     for b in SAMPLE_BUSINESSES:
         if b.business_id == business_id:
             return b
-    return None
+    return None
