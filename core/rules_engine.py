@@ -11,7 +11,7 @@ check_requirement() in agent_demo.py.
 
 from dataclasses import dataclass
 from typing import List
-from business_profile import BusinessProfile
+from core.business_profile import BusinessProfile
 
 
 @dataclass
@@ -122,6 +122,41 @@ ALL_RULES = [
 def evaluate_business(business: BusinessProfile) -> List[Finding]:
     """Run every rule against a business profile and return all findings."""
     return [rule(business) for rule in ALL_RULES]
+
+
+def check_requirements(business_id: str) -> dict:
+    """
+    Evaluate all compliance rules for a business by ID and return structured findings.
+    Supplements/replaces single-requirement checks with a full compliance audit.
+    """
+    from core.business_profile import get_business
+    biz = get_business(business_id)
+    if not biz:
+        return {
+            "business_id": business_id,
+            "error": f"No business found for id {business_id}",
+            "findings": []
+        }
+
+    raw_findings = evaluate_business(biz)
+    findings = []
+    for f in raw_findings:
+        entry = {
+            "requirement": f.requirement,
+            "applies": f.applies,
+            "reason": f.reason,
+            "evidence_id": f.evidence_id,
+        }
+        if "udyam" in f.requirement.lower() and f.applies:
+            entry["workflow_available"] = "udyam_registration"
+        findings.append(entry)
+
+    return {
+        "business_id": biz.business_id,
+        "business_name": biz.name,
+        "applicable_count": sum(1 for f in findings if f["applies"]),
+        "findings": findings,
+    }
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SME Audit AI — Simpler Compliance. Stronger Businesses.</title>
+  <meta name="description" content="AI-powered statutory compliance and audit assistant for Indian Small and Medium Enterprises. Understand regulations, identify risks, and stay compliant.">
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M3 13h4v8H3v-8zm7-5h4v13h-4V8zm7-7h4v20h-4V1z'/></svg>">
+</head>
+<body>
+
+  <!-- ==========================================
+       TOP NAVIGATION BAR
+       ========================================== -->
+  <nav class="navbar" id="main-navbar">
+    <a class="brand-logo" id="nav-brand" href="#landing-view" onclick="navigateTo('landing')">
+      <div class="brand-icon-box">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+      </div>
+      <div class="brand-name">
+        SME Audit <span style="color: var(--emerald-600);">AI</span>
+        <span class="ai-pill">PRO</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a class="nav-link" href="#pillars" onclick="scrollToSection('pillars')">4 Pillars</a></li>
+      <li><a class="nav-link" href="#phone-demo" onclick="scrollToSection('phone-demo')">WhatsApp Assistant</a></li>
+      <li><a class="nav-link" href="#features" onclick="scrollToSection('features')">Statutory Rules</a></li>
+      <li><a class="nav-link" onclick="navigateTo('dashboard')">Dashboard</a></li>
+      <li>
+        <a class="nav-link" style="color: var(--emerald-800); font-weight: 700; display: flex; align-items: center; gap: 6px;" onclick="navigateTo('agent')">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; animation: pulse-live 1.8s infinite;"></span>
+          Agent Studio
+        </a>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="btn btn-secondary btn-sm" id="btn-nav-agent" onclick="navigateTo('agent')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16"></line>
+          <line x1="16" y1="16" x2="16" y2="16"></line>
+        </svg>
+        Agent Studio
+      </button>
+      <button class="btn btn-primary btn-sm" id="btn-nav-launch" onclick="navigateTo('dashboard')">
+        Dashboard
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+       VIEW 1: LANDING PAGE
+       ========================================== -->
+  <main id="app-landing-view">
+    
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="pulse-dot"></span>
+          Statutory Compliance & Audit Assistant for Indian SMEs
+        </div>
+
+        <h1 class="hero-title">
+          Simpler Compliance.
+          <span class="highlight">Stronger Businesses.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Navigate GST thresholds, Udyam MSME classification, Shops & Establishments, and PF/ESI obligations. Powered by deterministic rules, regulatory RAG citations, and instant photo OCR.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg" id="btn-hero-dashboard" onclick="navigateTo('dashboard')">
+            Open SME Dashboard
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"></path>
+              <path d="M12 5l7 7-7 7"></path>
+            </svg>
+          </button>
+          <button class="btn btn-secondary btn-lg" id="btn-hero-demo-doc" onclick="triggerQuickDocUpload()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Upload Document (OCR)
+          </button>
+        </div>
+
+        <div class="hero-badges-row">
+          <div class="trust-badge-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Grounding Evidence Citation
+          </div>
+          <div class="trust-badge-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            PostgreSQL Persistence
+          </div>
+          <div class="trust-badge-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+            Gemini Vision OCR
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Smartphone Mockup (As in thumbnail!) -->
+      <div class="phone-mockup-wrapper" id="phone-demo">
+        <div class="phone-mockup-frame">
+          <div class="phone-notch">
+            <div class="notch-sensor"></div>
+            <div class="notch-camera"></div>
+          </div>
+
+          <div class="phone-screen">
+            <!-- Header -->
+            <div class="phone-chat-header">
+              <div class="phone-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              </div>
+              <div class="phone-header-info">
+                <div class="phone-header-name">SME Audit AI</div>
+                <div class="phone-header-status">Online • Official Compliance Bot</div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+            </div>
+
+            <!-- Messages Stream -->
+            <div class="phone-chat-body" id="hero-phone-messages">
+              <div class="chat-bubble sent">
+                Check my compliance for this month
+                <div class="chat-meta">10:24 <span class="chat-checks">✓✓</span></div>
+              </div>
+
+              <div class="chat-bubble received">
+                Analysing your records...
+                <div class="chat-checklist">
+                  <div class="chat-check-item"><span class="badge-check">✓</span> Documents verified</div>
+                  <div class="chat-check-item"><span class="badge-check">✓</span> Checking applicable rules</div>
+                  <div class="chat-check-item"><span class="badge-check">✓</span> Scanning for risks</div>
+                  <div class="chat-check-item"><span class="badge-check">✓</span> Preparing summary</div>
+                </div>
+                <div class="chat-meta">10:24</div>
+              </div>
+
+              <div class="chat-bubble received">
+                Here's your compliance report 📄
+                <div class="chat-meta">10:25</div>
+              </div>
+
+              <div class="chat-bubble sent" style="background: #bbf7d0; font-weight: 600;">
+                All clear! ✅ Keep growing!
+                <div class="chat-meta">10:25 <span class="chat-checks">✓✓</span></div>
+              </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="phone-chat-input-bar">
+              <input type="text" id="hero-phone-input" class="phone-input-field" placeholder="Type a message..." value="Check GST eligibility">
+              <button class="phone-send-btn" id="hero-phone-send" onclick="sendHeroPhoneMessage()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Pillars Section (As in Thumbnail!) -->
+    <section class="pillars-section" id="pillars">
+      <div class="section-header-centered">
+        <div class="section-tag">Core Capabilities</div>
+        <h2 class="section-title">Built for the Complete SME Compliance Lifecycle</h2>
+      </div>
+
+      <div class="pillars-grid">
+        <!-- Pillar 1 -->
+        <div class="pillar-card pillar-1">
+          <div class="pillar-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <h3 class="pillar-title">Understand Regulations</h3>
+          <p class="pillar-desc">
+            Directly cites official statutory provisions (CGST Act, MSME notifications, EPF/ESIC slabs) so you never deal with ambiguous legal jargon.
+          </p>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="pillar-card pillar-2">
+          <div class="pillar-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <h3 class="pillar-title">Identify Risks</h3>
+          <p class="pillar-desc">
+            Evaluates your turnover, headcount, and state rules to detect mandatory registration liabilities and compliance gaps before penalties occur.
+          </p>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="pillar-card pillar-3">
+          <div class="pillar-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <h3 class="pillar-title">Stay Compliant</h3>
+          <p class="pillar-desc">
+            Deterministic rules engine with truthful audit tracking and state machines that never claim false completion without genuine confirmation.
+          </p>
+        </div>
+
+        <!-- Pillar 4 -->
+        <div class="pillar-card pillar-4">
+          <div class="pillar-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          </div>
+          <h3 class="pillar-title">Grow Confidently</h3>
+          <p class="pillar-desc">
+            Scale without fear of bureaucratic roadblocks. Auto-prefill official portals like Udyam MSME and maintain an auditable PostgreSQL record.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       VIEW 2: SME DASHBOARD (Main Application)
+       ========================================== -->
+  <main id="app-dashboard-view">
+    
+    <!-- Executive Dashboard Header Card -->
+    <header class="dashboard-header-card">
+      <div class="dash-biz-meta">
+        <div class="biz-badge-icon" id="dash-biz-icon">🏢</div>
+        <div class="biz-titles">
+          <div class="biz-name-row">
+            <h1 class="biz-title-text" id="dash-biz-name">ABC Traders</h1>
+            <span class="status-indicator-pill status-active" id="dash-biz-status">Active SME</span>
+          </div>
+          <div class="biz-sub-info">
+            <span id="dash-biz-owner">Owner: Rahul Sharma</span>
+            <span>•</span>
+            <span id="dash-biz-location">Indore, Madhya Pradesh</span>
+            <span>•</span>
+            <span class="evidence-id-badge" id="dash-biz-id-badge">ID: B005</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-right-stats">
+        <div class="compliance-health-ring">
+          <div class="ring-score" id="dash-health-score">92%</div>
+          <div class="ring-label">
+            <span>Statutory</span>
+            <span>Health Score</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-color: #064e3b;" onclick="navigateTo('agent')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+            <circle cx="12" cy="5" r="2"></circle>
+            <path d="M12 7v4"></path>
+            <line x1="8" y1="16" x2="8" y2="16"></line>
+            <line x1="16" y1="16" x2="16" y2="16"></line>
+          </svg>
+          Launch Agent Studio
+        </button>
+
+        <button class="btn btn-secondary btn-sm" id="btn-quick-sync" onclick="saveAllBusinessProfileDetails()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Save to DB
+        </button>
+
+        <button class="btn btn-secondary btn-sm" onclick="openAuthModal('signin')">
+          Switch Profile
+        </button>
+      </div>
+    </header>
+
+    <!-- Autonomous Agent Callout Banner in Dashboard -->
+    <div style="background: linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(4, 120, 87, 0.92) 100%); border-radius: var(--radius-lg); padding: 18px 24px; color: #ffffff; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.35);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+          🤖
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <strong style="font-family: var(--font-heading); font-size: 1.05rem;">Autonomous Compliance Agent Studio</strong>
+            <span style="font-size: 0.7rem; font-weight: 700; background: rgba(255, 255, 255, 0.2); padding: 2px 8px; border-radius: var(--radius-full); text-transform: uppercase;">READY TO DELEGATE</span>
+          </div>
+          <p style="font-size: 0.83rem; color: rgba(255, 255, 255, 0.85); margin-top: 2px;">
+            Delegate statutory audits, automatic Udyam portal filings, and composition scheme checks with live tool calling telemetry.
+          </p>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="btn btn-sm" style="background: #ffffff; color: var(--emerald-950); font-weight: 700;" onclick="navigateTo('agent')">
+          Open Agent Workspace ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- Segmented Navigation Tabs -->
+    <div class="dash-nav-tabs">
+      <button class="dash-tab-btn active" id="tab-btn-profile" onclick="switchDashboardTab('profile')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Profile & Details ("Update / Retrieve Anything")
+      </button>
+
+      <button class="dash-tab-btn" id="tab-btn-scorecard" onclick="switchDashboardTab('scorecard')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        Statutory Compliance Scorecard
+      </button>
+
+      <button class="dash-tab-btn" id="tab-btn-agent-console" style="color: var(--emerald-800); font-weight: 700;" onclick="navigateTo('agent')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16"></line>
+          <line x1="16" y1="16" x2="16" y2="16"></line>
+        </svg>
+        🤖 Autonomous Agent Workspace
+      </button>
+
+      <button class="dash-tab-btn" id="tab-btn-assistant" onclick="switchDashboardTab('assistant')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        WhatsApp Compliance Assistant
+      </button>
+
+      <button class="dash-tab-btn" id="tab-btn-udyam" onclick="switchDashboardTab('udyam')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        Udyam MSME Automation
+      </button>
+    </div>
+
+    <!-- PANE 1: Comprehensive Profile & Details Manager -->
+    <div class="dash-content-pane active" id="pane-profile">
+      <div class="profile-editor-layout">
+        
+        <!-- Left: Interactive Profile Editor Form -->
+        <div>
+          <div class="tactile-card">
+            <div class="tactile-card-header">
+              <h2 class="tactile-card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Enterprise Identity & Operational Scale
+              </h2>
+              <span class="evidence-id-badge">PostgreSQL Synced</span>
+            </div>
+
+            <div class="grid-2-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-biz-name">Legal Business Name</label>
+                <input type="text" id="field-biz-name" class="form-control" value="ABC Traders">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-owner-name">Owner / Authorized Signatory</label>
+                <input type="text" id="field-owner-name" class="form-control" value="Rahul Sharma">
+              </div>
+            </div>
+
+            <div class="grid-3-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-biz-type">Sector / Type</label>
+                <select id="field-biz-type" class="form-control" onchange="recalculateInstantAudit()">
+                  <option value="goods">Goods (Trading / Mfg)</option>
+                  <option value="services">Services (Consulting / IT)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-turnover">Turnover (Rs. Lakhs / Year)</label>
+                <input type="number" id="field-turnover" class="form-control" value="45.0" step="0.5" oninput="recalculateInstantAudit()">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-employees">Employee Count</label>
+                <input type="number" id="field-employees" class="form-control" value="4" min="1" oninput="recalculateInstantAudit()">
+              </div>
+            </div>
+
+            <div class="grid-2-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-state">State / Union Territory</label>
+                <select id="field-state" class="form-control" onchange="onStateDropdownChanged()">
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh (Special Category)</option>
+                  <option value="Uttarakhand">Uttarakhand (Special Category)</option>
+                  <option value="Assam">Assam (Special Category)</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Special Category State Threshold</label>
+                <div class="toggle-wrapper">
+                  <span style="font-size: 0.82rem; font-weight: 600; color: var(--slate-700);">Lower GST Limit (Rs.20L/10L)</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="field-special-state" onchange="recalculateInstantAudit()">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-activity">Primary Business Activity</label>
+                <input type="text" id="field-activity" class="form-control" value="Wholesale trading of commercial goods">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-address">Principal Address</label>
+                <input type="text" id="field-address" class="form-control" value="Sector 4, Industrial Area, Indore, Madhya Pradesh">
+              </div>
+            </div>
+          </div>
+
+          <!-- Statutory IDs Card -->
+          <div class="tactile-card">
+            <div class="tactile-card-header">
+              <h2 class="tactile-card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="12" y2="16"></line></svg>
+                Statutory Identification & Contact
+              </h2>
+            </div>
+
+            <div class="grid-3-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-pan">PAN (10 characters)</label>
+                <input type="text" id="field-pan" class="form-control" value="ABCDE1234F" maxlength="10">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-gstin">GSTIN</label>
+                <input type="text" id="field-gstin" class="form-control" value="23ABCDE1234F1Z5" maxlength="15">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-aadhaar">Aadhaar (Masked)</label>
+                <input type="text" id="field-aadhaar" class="form-control" value="XXXX-XXXX-1098">
+              </div>
+            </div>
+
+            <div class="grid-2-cols">
+              <div class="form-group">
+                <label class="form-label" for="field-mobile">Primary Mobile</label>
+                <input type="text" id="field-mobile" class="form-control" value="9876543210">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-email">Registered Email</label>
+                <input type="email" id="field-email" class="form-control" value="rahul.sharma@example.com">
+              </div>
+            </div>
+
+            <div style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 12px;">
+              <button class="btn btn-primary" onclick="saveAllBusinessProfileDetails()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                Save & Sync to PostgreSQL
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Vision OCR Dropzone & Official Paper Certificate Preview -->
+        <div>
+          <!-- OCR Upload Card -->
+          <div class="tactile-card">
+            <div class="tactile-card-header">
+              <h2 class="tactile-card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Gemini Vision OCR Ingestion
+              </h2>
+            </div>
+            
+            <p style="font-size: 0.84rem; color: var(--slate-600); margin-bottom: 14px;">
+              Upload a photo of your GST Certificate, PAN Card, electricity bill, or invoice to automatically extract and populate your profile details.
+            </p>
+
+            <div class="ocr-upload-zone" id="ocr-dropzone" onclick="document.getElementById('ocr-file-input').click()">
+              <input type="file" id="ocr-file-input" style="display: none;" accept="image/*,.pdf" onchange="handleDocumentUpload(this.files[0])">
+              <div class="ocr-upload-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              </div>
+              <div style="font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; color: var(--slate-800);">
+                Click or Drag & Drop Document Photo
+              </div>
+              <div style="font-size: 0.78rem; color: var(--slate-500); margin-top: 4px;">
+                Supports JPG, PNG, WEBP, PDF (Auto-extracts PAN, GSTIN, Address, Turnover)
+              </div>
+            </div>
+
+            <div id="ocr-status-box" style="display: none; margin-top: 14px; padding: 12px; background: var(--emerald-50); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.3);">
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--emerald-900);" id="ocr-status-text">
+                Analyzing photo with Gemini Vision...
+              </div>
+            </div>
+          </div>
+
+          <!-- Official Paper Certificate Card -->
+          <div class="paper-cert-card" id="paper-cert-preview">
+            <div class="paper-cert-header">
+              <div class="paper-cert-title">Statutory Enterprise Profile</div>
+              <span class="evidence-id-badge" id="cert-reg-status">REGISTERED</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.84rem; color: var(--slate-700);">
+              <div><strong>Enterprise:</strong> <span id="cert-name">ABC Traders</span></div>
+              <div><strong>Proprietor:</strong> <span id="cert-owner">Rahul Sharma</span></div>
+              <div><strong>GSTIN:</strong> <span id="cert-gstin" style="font-family: var(--font-mono);">23ABCDE1234F1Z5</span></div>
+              <div><strong>Annual Turnover:</strong> Rs.<span id="cert-turnover">45.0</span> Lakhs</div>
+              <div><strong>State:</strong> <span id="cert-state">Madhya Pradesh</span></div>
+              <div><strong>Activity:</strong> <span id="cert-activity">Wholesale trading</span></div>
+            </div>
+
+            <div class="embossed-seal-stamp">
+              <span>SME AUDIT</span>
+              <span>VERIFIED</span>
+              <span>2026</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PANE 2: Statutory Compliance Scorecard -->
+    <div class="dash-content-pane" id="pane-scorecard">
+      <div class="tactile-card">
+        <div class="tactile-card-header">
+          <h2 class="tactile-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Statutory Threshold Audit Findings (Rules Engine)
+          </h2>
+          <button class="btn btn-secondary btn-sm" onclick="fetchLiveAuditScorecard()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Re-evaluate Audit
+          </button>
+        </div>
+
+        <div class="scorecard-grid" id="scorecard-findings-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE 3: Conversational Compliance Assistant (WhatsApp Style) -->
+    <div class="dash-content-pane" id="pane-assistant">
+      <div class="assistant-view-layout">
+        <!-- Main Chat Box -->
+        <div class="chat-console-box">
+          <div class="tactile-card-header" style="margin-bottom: 12px; padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="phone-avatar" style="width: 32px; height: 32px; font-size: 14px;">AI</div>
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem;">SME Compliance Agent</div>
+                <div style="font-size: 0.75rem; color: var(--emerald-700);">Grounded in official statutory regulations</div>
+              </div>
+            </div>
+            <span class="evidence-id-badge">Active Business: <span id="chat-active-biz-label">ABC Traders</span></span>
+          </div>
+
+          <div class="chat-messages-container" id="dash-chat-messages">
+            <div class="chat-bubble received">
+              Namaste! I am your SME Audit Assistant. Ask me to check your monthly compliance status, evaluate GST thresholds, or audit composition scheme eligibility.
+              <div class="chat-meta">Just now</div>
+            </div>
+          </div>
+
+          <div class="chat-suggestions-strip">
+            <button class="suggestion-chip" onclick="quickSendChat('Check my compliance for this month')">Check my compliance for this month</button>
+            <button class="suggestion-chip" onclick="quickSendChat('Am I eligible for composition scheme?')">Composition scheme eligibility?</button>
+            <button class="suggestion-chip" onclick="quickSendChat('What are my GST limits in Madhya Pradesh?')">GST threshold check</button>
+            <button class="suggestion-chip" onclick="quickSendChat('Do I need PF or ESI registration?')">PF & ESI requirements</button>
+          </div>
+
+          <div class="chat-input-bar-desk">
+            <input type="text" id="dash-chat-input" class="form-control" placeholder="Ask anything about your business compliance..." onkeydown="if(event.key==='Enter') sendDashboardChatMessage()">
+            <button class="btn btn-primary" onclick="sendDashboardChatMessage()">
+              Send
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Quick Info Card -->
+        <div>
+          <div class="tactile-card">
+            <div class="tactile-card-header">
+              <h2 class="tactile-card-title">Live Guidance</h2>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--slate-600); line-height: 1.5; margin-bottom: 14px;">
+              The conversational assistant simulates the same workflow shown in the thumbnail:
+            </p>
+            <div class="chat-checklist" style="margin-bottom: 16px;">
+              <div class="chat-check-item"><span class="badge-check">✓</span> 1. Verify business documents</div>
+              <div class="chat-check-item"><span class="badge-check">✓</span> 2. Evaluate statutory limits</div>
+              <div class="chat-check-item"><span class="badge-check">✓</span> 3. Scan for penalty risks</div>
+              <div class="chat-check-item"><span class="badge-check">✓</span> 4. Formulate grounded advice</div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--slate-500);">
+              Every claim cites specific regulation evidence IDs from the official gazette notifications.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE 4: Udyam MSME Workflow Automation -->
+    <div class="dash-content-pane" id="pane-udyam">
+      <div class="tactile-card">
+        <div class="tactile-card-header">
+          <h2 class="tactile-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            Official Udyam MSME Registration Workflow
+          </h2>
+          <span class="evidence-id-badge" id="udyam-wf-status-badge">READY</span>
+        </div>
+
+        <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 24px;">
+          Automated pre-filling pipeline for the official Ministry of MSME portal (<code>udyamregistration.gov.in</code>). Validates PAN & Aadhaar formats, checks portal layout, and safely pauses at the OTP boundary.
+        </p>
+
+        <div class="stepper-progress-bar">
+          <div class="step-node completed" id="wf-step-1">
+            <div class="node-circle">1</div>
+            <div class="node-label">Data Discovery</div>
+          </div>
+          <div class="step-node active" id="wf-step-2">
+            <div class="node-circle">2</div>
+            <div class="node-label">Format Validation</div>
+          </div>
+          <div class="step-node" id="wf-step-3">
+            <div class="node-circle">3</div>
+            <div class="node-label">Pre-fill Portal</div>
+          </div>
+          <div class="step-node" id="wf-step-4">
+            <div class="node-circle">4</div>
+            <div class="node-label">Aadhaar OTP</div>
+          </div>
+          <div class="step-node" id="wf-step-5">
+            <div class="node-circle">5</div>
+            <div class="node-label">PAN Stage 2</div>
+          </div>
+        </div>
+
+        <div id="udyam-action-box" style="margin-top: 30px; padding: 20px; background: #ffffff; border-radius: var(--radius-lg); border: 1px solid rgba(15, 23, 42, 0.08); box-shadow: var(--skeuo-inset-depth);">
+          <div id="udyam-ready-state">
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--slate-900); margin-bottom: 8px;">
+              Ready to automate registration for <span id="udyam-target-biz-name">ABC Traders</span>
+            </h3>
+            <p style="font-size: 0.84rem; color: var(--slate-600); margin-bottom: 16px;">
+              Click below to initiate the automated browser workflow in simulation / dry-run mode.
+            </p>
+            <button class="btn btn-primary" onclick="triggerUdyamWorkflowStart()">
+              Start Automated Udyam Workflow
+            </button>
+          </div>
+
+          <div id="udyam-otp-state" style="display: none;">
+            <div style="padding: 12px 16px; background: var(--amber-100); border-radius: var(--radius-md); border: 1px solid rgba(245, 158, 11, 0.4); margin-bottom: 16px;">
+              <strong style="color: #92400e;">Mandatory User Authorization Checkpoint:</strong>
+              <div style="font-size: 0.85rem; color: #78350f; margin-top: 4px;" id="udyam-prompt-text">
+                Please enter the 6-digit Aadhaar OTP sent to registered mobile.
+              </div>
+            </div>
+
+            <div class="form-group" style="max-width: 240px;">
+              <label class="form-label" for="udyam-otp-input">6-Digit Aadhaar OTP</label>
+              <input type="text" id="udyam-otp-input" class="form-control" placeholder="123456" maxlength="6" value="654321">
+            </div>
+
+            <button class="btn btn-primary" onclick="submitUdyamOTP()">
+              Submit OTP & Resume Workflow
+            </button>
+          </div>
+
+          <div id="udyam-completed-state" style="display: none; padding: 12px; background: var(--emerald-50); border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.3);">
+            <strong style="color: var(--emerald-900);">Stage 1 Authentication Verified:</strong>
+            <p style="font-size: 0.85rem; color: var(--slate-700); margin-top: 4px;" id="udyam-result-msg"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       VIEW 3: AUTONOMOUS AGENT STUDIO & WORKSPACE
+       ========================================== -->
+  <main id="app-agent-view">
+    
+    <!-- Agent Studio Header -->
+    <header class="agent-header-card">
+      <div class="agent-header-left">
+        <div class="agent-avatar-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+            <circle cx="12" cy="5" r="2"></circle>
+            <path d="M12 7v4"></path>
+            <line x1="8" y1="16" x2="8" y2="16"></line>
+            <line x1="16" y1="16" x2="16" y2="16"></line>
+          </svg>
+          <span class="agent-live-dot" title="Agent Online & Grounded"></span>
+        </div>
+        <div class="agent-header-titles">
+          <h1>
+            Compliance Agent Console
+            <span class="evidence-id-badge" style="background: #dcfce7; color: #166534; border-color: rgba(16, 185, 129, 0.4);">
+              ● LIVE AUTONOMOUS AGENT
+            </span>
+          </h1>
+          <div class="agent-header-sub">
+            <span>Entity: <strong id="agent-active-biz-name">ABC Traders</strong></span>
+            <span>•</span>
+            <span id="agent-active-owner">Owner: Rahul Sharma</span>
+            <span>•</span>
+            <span>Engine: <strong>Statutory Rules + RAG v2.0</strong></span>
+            <span>•</span>
+            <span class="evidence-id-badge" id="agent-active-biz-id">ID: B005</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="navigateTo('dashboard')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back to Dashboard
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="openOfficialMemoModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Export Official Memo
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="resetAgentSession()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          New Session
+        </button>
+      </div>
+    </header>
+
+    <!-- 1-Click Mission Playbooks -->
+    <div class="agent-playbooks-bar">
+      <div class="playbooks-title-row">
+        <div class="playbooks-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Autonomous Agent Missions (1-Click Playbooks)
+        </div>
+        <span style="font-size: 0.78rem; color: var(--slate-500);">Direct multi-tool pipeline executions</span>
+      </div>
+
+      <div class="playbooks-grid">
+        <!-- Playbook 1 -->
+        <div class="playbook-card" onclick="runAgentPlaybook('full_audit')">
+          <div class="playbook-top">
+            <div class="playbook-icon" style="background: #dcfce7; color: #166534;">🛡️</div>
+            <span class="playbook-badge badge-auto">Instant Audit</span>
+          </div>
+          <div>
+            <div class="playbook-title">Full Statutory Audit</div>
+            <div class="playbook-desc">Runs rules engine across GST, Udyam, Shops & Est, PF, and ESI with citations.</div>
+          </div>
+        </div>
+
+        <!-- Playbook 2 -->
+        <div class="playbook-card" onclick="runAgentPlaybook('udyam_automate')">
+          <div class="playbook-top">
+            <div class="playbook-icon" style="background: #fef3c7; color: #92400e;">🏛️</div>
+            <span class="playbook-badge badge-hitl">HITL Portal</span>
+          </div>
+          <div>
+            <div class="playbook-title">Automate Udyam Registration</div>
+            <div class="playbook-desc">Pre-fills official MSME portal, pauses safely for Aadhaar OTP authorization.</div>
+          </div>
+        </div>
+
+        <!-- Playbook 3 -->
+        <div class="playbook-card" onclick="runAgentPlaybook('composition_check')">
+          <div class="playbook-top">
+            <div class="playbook-icon" style="background: #e0e7ff; color: #3730a3;">📊</div>
+            <span class="playbook-badge badge-tax">Section 10</span>
+          </div>
+          <div>
+            <div class="playbook-title">Composition Scheme Slabs</div>
+            <div class="playbook-desc">Evaluates ₹1.5 Cr / ₹75L threshold, flat 1% tax benefit vs ITC trade-offs.</div>
+          </div>
+        </div>
+
+        <!-- Playbook 4 -->
+        <div class="playbook-card" onclick="runAgentPlaybook('labor_check')">
+          <div class="playbook-top">
+            <div class="playbook-icon" style="background: #f1f5f9; color: #334155;">👥</div>
+            <span class="playbook-badge badge-law">Labor Slabs</span>
+          </div>
+          <div>
+            <div class="playbook-title">PF / ESI Headcount Risk</div>
+            <div class="playbook-desc">Audits 20-employee EPF and 10-employee ESIC statutory liability barriers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual-Column Workspace Layout -->
+    <div class="agent-workspace-grid">
+      
+      <!-- Left: Interactive Execution & Interaction Stream -->
+      <section class="agent-stream-panel">
+        <div class="stream-header">
+          <div class="stream-header-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            Execution Timeline & Audit Feed
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" style="padding: 3px 8px; font-size: 0.72rem;" onclick="toggleAgentDocUpload()">
+              📷 Audit Document Photo
+            </button>
+            <span class="evidence-id-badge" id="agent-active-badge">READY</span>
+          </div>
+        </div>
+
+        <!-- Embedded Document Dropzone (Toggled) -->
+        <div class="agent-embedded-dropzone" id="agent-embedded-ocr-zone" onclick="document.getElementById('agent-doc-input').click()">
+          <input type="file" id="agent-doc-input" style="display: none;" accept="image/*,.pdf" onchange="handleAgentDocumentUpload(this.files[0])">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--emerald-800);">
+            📷 Drop or select a document photo (GST Certificate, PAN, Electricity Bill, Invoice)
+          </div>
+          <div style="font-size: 0.76rem; color: var(--slate-500); margin-top: 3px;">
+            Gemini Vision OCR will extract fields and auto-trigger agent compliance cross-check.
+          </div>
+        </div>
+
+        <!-- Scrollable Messages & Execution Timeline -->
+        <div class="agent-messages-viewport" id="agent-feed-viewport">
+          
+          <!-- Default Briefing Card -->
+          <div class="agent-briefing-banner" id="agent-welcome-briefing">
+            <div class="agent-briefing-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Mission-Ready Compliance Co-Pilot
+            </div>
+            <div>
+              Connected to <strong>PostgreSQL Business Vault</strong> and the official <strong>Gazette Regulatory Corpus</strong>. 
+              The agent uses deterministic statutory logic, hybrid vector/BM25 retrieval, and verified official portal workflows. 
+              Select a playbook mission above, or ask any compliance question below.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Input & Command Dock -->
+        <div class="agent-dock-area">
+          <div class="agent-chips-strip">
+            <button class="agent-chip" onclick="quickAgentPrompt('Audit my business ABC Traders against all statutory rules')">Audit ABC Traders</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('Initiate Udyam MSME registration workflow')">Start Udyam Registration</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('Can I opt for the composition scheme in Madhya Pradesh?')">Composition Scheme Check</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('Am I liable for EPF or ESIC registrations with 4 employees?')">PF & ESI Liability</button>
+          </div>
+
+          <div class="agent-input-row">
+            <button class="agent-upload-trigger-btn" title="Audit Document Photo via Vision OCR" onclick="toggleAgentDocUpload()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+            <input type="text" id="agent-custom-input" class="agent-input-field" placeholder="Command the compliance agent (e.g., 'Check my GST liabilities and start Udyam registration')..." onkeydown="if(event.key==='Enter') sendAgentCustomPrompt()">
+            <button class="btn btn-primary agent-send-button" id="btn-agent-send" onclick="sendAgentCustomPrompt()">
+              Execute
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Live SME Telemetry & Statutory State Matrix -->
+      <aside class="agent-telemetry-drawer">
+        
+        <!-- Widget 1: Active Entity Dossier -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>Live Entity Dossier</span>
+            <span class="evidence-id-badge" style="font-size: 0.68rem;">DB SYNCED</span>
+          </div>
+
+          <div class="dossier-row">
+            <span class="dossier-label">Enterprise</span>
+            <span class="dossier-val" id="tele-biz-name">ABC Traders</span>
+          </div>
+          <div class="dossier-row">
+            <span class="dossier-label">Proprietor</span>
+            <span class="dossier-val" id="tele-biz-owner">Rahul Sharma</span>
+          </div>
+          <div class="dossier-row">
+            <span class="dossier-label">State / UT</span>
+            <span class="dossier-val" id="tele-biz-state">Madhya Pradesh</span>
+          </div>
+          <div class="dossier-row">
+            <span class="dossier-label">Sector</span>
+            <span class="dossier-val" id="tele-biz-type">Goods (Commercial)</span>
+          </div>
+          <div class="dossier-row">
+            <span class="dossier-label">GSTIN</span>
+            <span class="dossier-val" id="tele-biz-gstin" style="font-family: var(--font-mono); font-size: 0.76rem;">23ABCDE1234F1Z5</span>
+          </div>
+          <div class="dossier-row">
+            <span class="dossier-label">Headcount</span>
+            <span class="dossier-val" id="tele-biz-employees">4 Staff</span>
+          </div>
+
+          <div class="turnover-meter-box">
+            <div class="meter-labels">
+              <span>Annual Turnover</span>
+              <strong id="tele-meter-val">₹55.0L / ₹40L GST Limit</strong>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="tele-meter-bar" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 2: Statutory Compliance Matrix -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>Statutory Status Matrix</span>
+            <span style="font-size: 0.7rem; color: var(--emerald-700); font-weight: 700;">6 LAWS MONITORED</span>
+          </div>
+
+          <div class="matrix-grid">
+            <div class="matrix-item">
+              <span class="matrix-law-name">GST Registration</span>
+              <span class="matrix-pill pill-required" id="matrix-gst-pill">REQUIRED</span>
+            </div>
+            <div class="matrix-item">
+              <span class="matrix-law-name">Composition Scheme</span>
+              <span class="matrix-pill pill-eligible" id="matrix-comp-pill">ELIGIBLE</span>
+            </div>
+            <div class="matrix-item">
+              <span class="matrix-law-name">Udyam MSME (Micro)</span>
+              <span class="matrix-pill pill-required" id="matrix-udyam-pill">REQUIRED</span>
+            </div>
+            <div class="matrix-item">
+              <span class="matrix-law-name">Shops & Establishments</span>
+              <span class="matrix-pill pill-required" id="matrix-shop-pill">REQUIRED</span>
+            </div>
+            <div class="matrix-item">
+              <span class="matrix-law-name">EPF (Provident Fund)</span>
+              <span class="matrix-pill pill-exempt" id="matrix-epf-pill">EXEMPT (&lt;20)</span>
+            </div>
+            <div class="matrix-item">
+              <span class="matrix-law-name">ESIC (Social Security)</span>
+              <span class="matrix-pill pill-exempt" id="matrix-esi-pill">EXEMPT (&lt;10)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget 3: Active State Machine Monitor -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>Workflow Automation State</span>
+            <span class="wf-state-badge wf-ready" id="tele-wf-status">IDLE</span>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--slate-600); margin-bottom: 8px;">
+            Target: <code>udyamregistration.gov.in</code>
+          </p>
+          <div class="wf-state-box">
+            <div class="wf-state-header">
+              <span style="font-size: 0.76rem; font-weight: 700; color: var(--slate-800);">Active Pipeline ID:</span>
+              <code style="font-size: 0.72rem;" id="tele-wf-id">WF-UDYAM-B005</code>
+            </div>
+            <div style="font-size: 0.76rem; color: var(--slate-600);" id="tele-wf-desc">
+              Ready to automate Stage 1 Aadhaar verification.
+            </div>
+          </div>
+
+          <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 12px;" onclick="openOfficialMemoModal()">
+            📄 View Official Audit Memo
+          </button>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ==========================================
+       OFFICIAL AUDIT MEMO MODAL
+       ========================================== -->
+  <div class="memo-modal-overlay" id="memo-modal">
+    <div class="memo-document-card">
+      <button class="memo-close-btn" onclick="closeOfficialMemoModal()">✕</button>
+      
+      <div class="memo-header">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; color: var(--emerald-800); text-transform: uppercase;">
+            STATUTORY COMPLIANCE & AUDIT MEMORANDUM
+          </div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-top: 4px;" id="memo-modal-biz-name">
+            ABC Traders
+          </h2>
+          <div style="font-size: 0.8rem; color: var(--slate-600);" id="memo-modal-biz-sub">
+            Indore, Madhya Pradesh • ID: B005
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div class="evidence-id-badge" style="background: #0f172a; color: #ffffff;">OFFICIAL VERIFICATION</div>
+          <div style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--slate-500); margin-top: 4px;" id="memo-modal-timestamp">
+            2026-09-20
+          </div>
+        </div>
+      </div>
+
+      <div id="memo-modal-body-content" style="font-size: 0.88rem; line-height: 1.6; color: var(--slate-800);">
+        <!-- Populated dynamically with verified audit findings -->
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(15, 23, 42, 0.1); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.75rem; color: var(--slate-500);">
+          Grounded by SME Audit AI Engine • Digitally Validated
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">
+          Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       AUTHENTICATION MODAL
+       ========================================== -->
+  <div class="auth-modal-overlay" id="auth-modal">
+    <div class="auth-card">
+      <button class="auth-close-btn" onclick="closeAuthModal()">✕</button>
+      
+      <div style="text-align: center; margin-bottom: 12px;">
+        <div class="brand-name" style="justify-content: center;">
+          SME Audit <span style="color: var(--emerald-600);">AI</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--slate-600); margin-top: 4px;">
+          Access your PostgreSQL Compliance Vault
+        </p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="btn-tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab-btn" id="btn-tab-register" onclick="switchAuthTab('register')">Register SME</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="form-signin" onsubmit="event.preventDefault(); handleUserLogin();">
+        <div class="form-group">
+          <label class="form-label" for="auth-signin-email">Email Address</label>
+          <input type="email" id="auth-signin-email" class="form-control" value="rahul.sharma@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="auth-signin-password">Password</label>
+          <input type="password" id="auth-signin-password" class="form-control" value="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+          Sign In to Dashboard
+        </button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="form-register" style="display: none;" onsubmit="event.preventDefault(); handleUserRegister();">
+        <div class="form-group">
+          <label class="form-label" for="auth-reg-name">Your Full Name</label>
+          <input type="text" id="auth-reg-name" class="form-control" placeholder="e.g. Ramesh Patel" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="auth-reg-biz">Business / Enterprise Name</label>
+          <input type="text" id="auth-reg-biz" class="form-control" placeholder="e.g. Patel Exports" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="auth-reg-email">Email Address</label>
+          <input type="email" id="auth-reg-email" class="form-control" placeholder="ramesh@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="auth-reg-phone">Mobile Phone</label>
+          <input type="text" id="auth-reg-phone" class="form-control" placeholder="9822334455">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+          Create SME Account
+        </button>
+      </form>
+
+      <!-- Demo Accounts Quick Selector -->
+      <div class="demo-account-pills">
+        <div class="demo-pills-label">Quick One-Click Demo Personas:</div>
+        <div class="demo-pills-grid">
+          <button class="demo-pill-btn" onclick="selectDemoAccount('rahul.sharma@example.com', 'B005')">
+            <strong>Rahul Sharma</strong><br>ABC Traders (Rs.45L)
+          </button>
+          <button class="demo-pill-btn" onclick="selectDemoAccount('ramesh.sharma@example.com', 'B001')">
+            <strong>Ramesh Sharma</strong><br>Sharma Textiles (Rs.50L)
+          </button>
+          <button class="demo-pill-btn" onclick="selectDemoAccount('verma@consulting.com', 'B002')">
+            <strong>Verma Consulting</strong><br>Services (Rs.15L)
+          </button>
+          <button class="demo-pill-btn" onclick="selectDemoAccount('thapa@handicrafts.com', 'B004')">
+            <strong>Thapa Handicrafts</strong><br>Special State (Rs.12L)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       VIEW 3: AGENT STUDIO — Compliance Execution Console
+       ========================================== -->
+  <main id="app-agent-view" style="display: none; padding-top: 70px; min-height: 100vh;">
+
+    <!-- Agent Studio Header -->
+    <div class="agent-header-card">
+      <div class="agent-header-left">
+        <div class="agent-studio-badge">
+          <span class="agent-pulse-ring"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+          <span id="agent-active-badge">READY</span>
+        </div>
+        <div>
+          <h1 class="agent-header-title">Compliance Agent Studio</h1>
+          <div class="agent-header-sub">
+            <span id="agent-active-biz-name">ABC Traders</span> &nbsp;·&nbsp;
+            <span id="agent-active-owner">Owner: Rahul Sharma</span> &nbsp;·&nbsp;
+            <span class="agent-biz-id-tag" id="agent-active-biz-id">ID: B005</span>
+          </div>
+        </div>
+      </div>
+      <div class="agent-header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toggleAgentDocUpload()" id="btn-agent-doc-upload">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Inspect Document
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="resetAgentSession()" id="btn-agent-reset">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-4.1"></path></svg>
+          New Session
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openOfficialMemoModal()" id="btn-agent-memo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Download Audit Memo
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="navigateTo('dashboard')" id="btn-agent-back">
+          ← Dashboard
+        </button>
+      </div>
+    </div>
+
+    <!-- Playbook Mission Bar -->
+    <div class="playbooks-section">
+      <div class="playbooks-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        One-Click Mission Playbooks
+      </div>
+      <div class="playbooks-grid">
+        <button class="playbook-card playbook-audit" onclick="runAgentPlaybook('full_audit')" id="pb-full-audit">
+          <div class="pb-icon">🏛️</div>
+          <div class="pb-title">Full Statutory Health Audit</div>
+          <div class="pb-sub">GST · Udyam · S&amp;E · PF · ESI · IBC</div>
+        </button>
+        <button class="playbook-card playbook-udyam" onclick="runAgentPlaybook('udyam_automate')" id="pb-udyam">
+          <div class="pb-icon">🤖</div>
+          <div class="pb-title">Autonomous Udyam Registration</div>
+          <div class="pb-sub">Portal automation + OTP e-KYC pipeline</div>
+        </button>
+        <button class="playbook-card playbook-composition" onclick="runAgentPlaybook('composition_check')" id="pb-composition">
+          <div class="pb-icon">📊</div>
+          <div class="pb-title">Composition Scheme Analysis</div>
+          <div class="pb-sub">Section 10 CGST · Tax slab savings</div>
+        </button>
+        <button class="playbook-card playbook-labor" onclick="runAgentPlaybook('labor_check')" id="pb-labor">
+          <div class="pb-icon">👥</div>
+          <div class="pb-title">EPF &amp; ESIC Risk Audit</div>
+          <div class="pb-sub">Headcount threshold exposure</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dual Pane Workspace -->
+    <div class="agent-workspace-grid">
+
+      <!-- LEFT: Agent Execution Feed -->
+      <div class="agent-feed-panel">
+
+        <!-- Doc Upload Zone (hidden by default) -->
+        <div class="agent-embedded-dropzone" id="agent-embedded-ocr-zone" onclick="document.getElementById('agent-ocr-file-input').click()">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--emerald-600)" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <div style="font-weight: 700; font-size: 0.85rem; color: var(--emerald-800); margin: 6px 0 2px;">Drop Document Photo Here</div>
+          <div style="font-size: 0.75rem; color: var(--slate-500);">Gemini Vision OCR will extract statutory fields and trigger discrepancy analysis</div>
+          <input type="file" id="agent-ocr-file-input" style="display:none;" accept="image/*" onchange="handleAgentDocumentUpload(this.files[0])">
+        </div>
+
+        <!-- Feed Viewport -->
+        <div class="agent-feed-viewport" id="agent-feed-viewport">
+          <div class="agent-briefing-banner" id="agent-welcome-briefing">
+            <div class="agent-briefing-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Agent Session Initialized
+            </div>
+            <div>
+              Connected to <strong>PostgreSQL Business Vault</strong> · Regulatory RAG corpus loaded (Hybrid BM25 + Vector) · Rules engine warm.
+              <br><br>
+              Select a <strong>Mission Playbook</strong> above for autonomous execution, or issue a custom compliance directive below.
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="agent-input-bar">
+          <div class="agent-quick-prompts" id="agent-quick-chips">
+            <button class="agent-chip" onclick="quickAgentPrompt('What is my current GST registration obligation?')">GST threshold?</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('Am I eligible for Composition Scheme under Section 10?')">Composition eligible?</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('What are my EPF and ESI obligations?')">PF/ESI liability?</button>
+            <button class="agent-chip" onclick="quickAgentPrompt('Summarize all my statutory non-compliances.')">Full risk brief</button>
+          </div>
+          <div class="agent-input-row">
+            <textarea
+              id="agent-custom-input"
+              class="agent-textarea"
+              placeholder="Issue a compliance directive… e.g. 'Do I need GST registration?' or 'What are penalties for late Udyam filing?'"
+              rows="2"
+              onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendAgentCustomPrompt(); }"
+            ></textarea>
+            <button class="agent-send-btn" onclick="sendAgentCustomPrompt()" id="btn-agent-send">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Telemetry Drawer -->
+      <div class="agent-telemetry-drawer">
+
+        <!-- Entity Dossier -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Active Entity
+            </span>
+          </div>
+          <div class="dossier-row"><span class="dossier-label">Business</span><span class="dossier-val" id="tele-biz-name">ABC Traders</span></div>
+          <div class="dossier-row"><span class="dossier-label">Owner</span><span class="dossier-val" id="tele-biz-owner">Rahul Sharma</span></div>
+          <div class="dossier-row"><span class="dossier-label">State</span><span class="dossier-val" id="tele-biz-state">Madhya Pradesh</span></div>
+          <div class="dossier-row"><span class="dossier-label">Sector</span><span class="dossier-val" id="tele-biz-type">GOODS</span></div>
+          <div class="dossier-row" style="border-bottom: none;"><span class="dossier-label">GSTIN</span><span class="dossier-val" style="font-family: var(--font-mono); font-size: 0.72rem;" id="tele-biz-gstin">23ABCDE1234F1Z5</span></div>
+          <div class="dossier-row" style="border-bottom: none;"><span class="dossier-label">Headcount</span><span class="dossier-val" id="tele-biz-employees">4 Staff</span></div>
+          <div class="turnover-meter-box">
+            <div class="meter-labels">
+              <span>Turnover Position</span>
+              <span id="tele-meter-val">₹45L / ₹40L GST Limit</span>
+            </div>
+            <div class="meter-track"><div class="meter-fill" id="tele-meter-bar"></div></div>
+          </div>
+        </div>
+
+        <!-- Compliance Status Matrix -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Compliance Matrix
+            </span>
+          </div>
+          <div class="matrix-grid">
+            <div class="matrix-item"><span class="matrix-law-name">GST Registration</span><span class="matrix-pill pill-required" id="matrix-gst-pill">REQUIRED</span></div>
+            <div class="matrix-item"><span class="matrix-law-name">Composition Scheme</span><span class="matrix-pill pill-eligible" id="matrix-comp-pill">ELIGIBLE</span></div>
+            <div class="matrix-item"><span class="matrix-law-name">Udyam (MSMED)</span><span class="matrix-pill pill-required" id="matrix-udyam-pill">REQUIRED</span></div>
+            <div class="matrix-item"><span class="matrix-law-name">EPF (20+ Staff)</span><span class="matrix-pill pill-exempt" id="matrix-epf-pill">EXEMPT (&lt;20)</span></div>
+            <div class="matrix-item"><span class="matrix-law-name">ESIC (10+ Staff)</span><span class="matrix-pill pill-exempt" id="matrix-esi-pill">EXEMPT (&lt;10)</span></div>
+          </div>
+        </div>
+
+        <!-- Active Workflow Monitor -->
+        <div class="telemetry-card">
+          <div class="telemetry-card-title">
+            <span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Active Workflow
+            </span>
+          </div>
+          <div class="wf-state-box">
+            <div class="wf-state-header">
+              <span style="font-size: 0.78rem; font-weight: 600; color: var(--slate-700);">Udyam MSME Pipeline</span>
+              <span class="wf-state-badge wf-ready" id="tele-wf-status">READY</span>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--slate-500); margin-bottom: 6px;" id="tele-wf-desc">Idle — run Udyam playbook to activate.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--slate-400);" id="tele-wf-id">WF-UDYAM-B005</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Official Memo Modal -->
+  <div class="memo-modal-overlay" id="memo-modal">
+    <div class="memo-document-card">
+      <button class="memo-close-btn" onclick="closeOfficialMemoModal()">✕</button>
+      <div class="memo-header">
+        <div>
+          <div style="font-family: var(--font-heading); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-500); margin-bottom: 4px;">SME Audit AI — Official Statutory Compliance Memo</div>
+          <div style="font-size: 1.2rem; font-weight: 800; color: var(--slate-900);" id="memo-modal-biz-name">ABC Traders</div>
+          <div style="font-size: 0.8rem; color: var(--slate-500); margin-top: 2px;" id="memo-modal-biz-sub">Rahul Sharma · Madhya Pradesh</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 0.68rem; color: var(--slate-400);">Audit Date</div>
+          <div style="font-weight: 700; font-size: 0.8rem;" id="memo-modal-timestamp">—</div>
+          <div style="margin-top: 6px; padding: 3px 8px; background: var(--emerald-100); color: var(--emerald-800); font-size: 0.68rem; font-weight: 700; border-radius: 4px;">CONFIDENTIAL</div>
+        </div>
+      </div>
+      <div id="memo-modal-body-content">
+        <p style="color: var(--slate-400); font-size: 0.85rem;">Run an audit to populate findings.</p>
+      </div>
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px dashed rgba(15,23,42,0.15); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.7rem; color: var(--slate-400);">Generated by SME Audit AI · Powered by Google Gemini · Grounded in official GoI Gazette citations</div>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-banner" id="global-toast">
+    <span class="toast-icon">✓</span>
+    <span id="toast-message">Action successful</span>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
