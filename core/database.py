@@ -73,8 +73,6 @@ def ensure_database_exists(db_name: str = DB_NAME):
         print(f"  [PostgreSQL] Notice: Could not connect to ensure database '{db_name}' exists: {e}")
         return False
 
-
-# Global engine and sessionmaker
 _engine = None
 _SessionLocal = None
 
