@@ -14,6 +14,7 @@ import os
 import re
 import json
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, Dict, Any, List
 
 from sqlalchemy import (
@@ -80,15 +81,33 @@ _SessionLocal = None
 def get_engine():
     global _engine
     if _engine is None:
-        ensure_database_exists(DB_NAME)
-        _engine = create_engine(
-            DATABASE_URL,
-            pool_size=5,
-            max_overflow=10,
-            pool_pre_ping=True,
-            connect_args={"connect_timeout": 3},
-        )
+        postgres_available = False
+        try:
+            if ensure_database_exists(DB_NAME):
+                candidate_engine = create_engine(
+                    DATABASE_URL,
+                    pool_size=5,
+                    max_overflow=10,
+                    pool_pre_ping=True,
+                    connect_args={"connect_timeout": 2},
+                )
+                with candidate_engine.connect() as conn:
+                    pass
+                _engine = candidate_engine
+                postgres_available = True
+                print("  [Database] Connected to PostgreSQL successfully.")
+        except Exception as e:
+            postgres_available = False
+
+        if not postgres_available:
+            sqlite_file = (Path(__file__).parent.parent / "sme_audit.db").resolve()
+            print(f"  [Database] PostgreSQL offline. Seamlessly using local SQLite persistence: {sqlite_file}")
+            _engine = create_engine(
+                f"sqlite:///{sqlite_file}",
+                connect_args={"check_same_thread": False},
+            )
     return _engine
+
 
 
 def get_session():

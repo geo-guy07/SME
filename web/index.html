@@ -869,10 +869,10 @@
         <!-- Bottom Input & Command Dock -->
         <div class="agent-dock-area">
           <div class="agent-chips-strip">
-            <button class="agent-chip" onclick="quickAgentPrompt('Audit my business ABC Traders against all statutory rules')">Audit ABC Traders</button>
-            <button class="agent-chip" onclick="quickAgentPrompt('Initiate Udyam MSME registration workflow')">Start Udyam Registration</button>
-            <button class="agent-chip" onclick="quickAgentPrompt('Can I opt for the composition scheme in Madhya Pradesh?')">Composition Scheme Check</button>
-            <button class="agent-chip" onclick="quickAgentPrompt('Am I liable for EPF or ESIC registrations with 4 employees?')">PF & ESI Liability</button>
+            <button class="agent-chip" onclick="runAgentPlaybook('full_audit')">Audit ABC Traders</button>
+            <button class="agent-chip" onclick="runAgentPlaybook('udyam_automate')">Start Udyam Registration</button>
+            <button class="agent-chip" onclick="runAgentPlaybook('composition_check')">Composition Scheme Check</button>
+            <button class="agent-chip" onclick="runAgentPlaybook('labor_check')">PF & ESI Liability</button>
           </div>
 
           <div class="agent-input-row">

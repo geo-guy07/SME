@@ -1,0 +1,29 @@
+# SME Compliance Assistant — Production & Development Dependencies
+
+# Web API & Server Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+python-multipart>=0.0.9
+
+# Database Persistence (PostgreSQL / SQLite via SQLAlchemy 2.0)
+SQLAlchemy>=2.0.28
+psycopg2-binary>=2.9.9
+
+# Regulatory Retrieval-Augmented Generation (RAG)
+chromadb>=0.4.24
+rank-bm25>=0.2.2
+
+# Document OCR, PDF Parsing & Imaging
+pypdf>=4.1.0
+pillow>=10.2.0
+
+# Gemini Vision & AI APIs
+google-genai>=0.1.1
+google-generativeai>=0.5.0
+
+# Configuration & Utilities
+python-dotenv>=1.0.1
+
+# Report Generation
+python-docx>=1.1.0

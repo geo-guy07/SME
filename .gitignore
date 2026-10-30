@@ -8,3 +8,5 @@ env/
 !.env.example
 .pytest_cache/
 .mypy_cache/
+sme_audit.db
+rag/chroma_db/

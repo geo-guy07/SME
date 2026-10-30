@@ -64,8 +64,11 @@ class VectorStore:
         print("  [VectorStore] Connecting to ChromaDB at:", db_path)
         self._client = chromadb.PersistentClient(path=db_path)
         self._embed_fn = _get_embedding_function()
+        # Prevent dimension mismatch crashes between Gemini (3072) and MiniLM (384)
+        embed_suffix = "gemini" if os.environ.get("GEMINI_API_KEY") else "local"
+        self.collection_name = f"{collection_name}_{embed_suffix}" if collection_name == COLLECTION_NAME else collection_name
         self._collection = self._client.get_or_create_collection(
-            name=collection_name,
+            name=self.collection_name,
             embedding_function=self._embed_fn,
             metadata={"hnsw:space": "cosine"},
         )
