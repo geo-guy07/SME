@@ -26,6 +26,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('[SME Audit AI] App loaded.');
   await loadBusinessProfile(STATE.currentBusinessId);
   await fetchLiveAuditScorecard();
+
+  const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+  if (hash === 'agent') {
+    navigateTo('agent');
+  } else if (hash === 'dashboard') {
+    navigateTo('dashboard');
+  } else if (hash === 'scorecard') {
+    navigateTo('dashboard');
+    switchDashboardTab('scorecard');
+  } else if (hash === 'udyam') {
+    navigateTo('dashboard');
+    switchDashboardTab('udyam');
+  }
 });
 
 // ==========================================
